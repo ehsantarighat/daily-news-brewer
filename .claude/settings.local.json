@@ -18,7 +18,19 @@
       "Bash(rm -rf /Users/ehsantarighat/Documents/daily-news-brewer)",
       "Bash(npm install:*)",
       "Bash(npx shadcn@latest init --yes --base-color slate --css-variables)",
-      "Bash(npx shadcn@latest init -d)"
+      "Bash(npx shadcn@latest init -d)",
+      "Bash(npx shadcn@latest add card input label badge toast)",
+      "Bash(npx shadcn@latest add card input label badge sonner)",
+      "Bash(npx tsc:*)",
+      "Bash(node node_modules/typescript/bin/tsc --noEmit)",
+      "Bash(node -e \"const s = require\\(''''/Users/ehsantarighat/Documents/Daily News Brewer/node_modules/stripe''''\\); console.log\\(Object.keys\\(s\\)\\)\")",
+      "Bash(node -e \"const s = require\\(''/Users/ehsantarighat/Documents/Daily News Brewer/node_modules/stripe''\\); console.log\\(s.LATEST_API_VERSION\\)\")",
+      "Bash(node -e \"const s = require\\(''/Users/ehsantarighat/Documents/Daily News Brewer/node_modules/stripe''\\); const Stripe = s.default || s; const instance = new Stripe\\(''sk_test_dummy''\\); console.log\\(instance.constructor.LATEST_API_VERSION || ''n/a''\\)\")",
+      "Bash(find '/Users/ehsantarighat/Documents/Daily News Brewer/node_modules/stripe' -name apiVersion*)",
+      "Bash(npm run:*)",
+      "Bash(node node_modules/next/dist/bin/next build)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(echo $PATH)"
     ]
   }
 }

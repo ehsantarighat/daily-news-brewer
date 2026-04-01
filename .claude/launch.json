@@ -1,0 +1,14 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Next.js Dev",
+      "runtimeExecutable": "/Users/ehsantarighat/pinokio/bin/miniconda/bin/node",
+      "runtimeArgs": ["node_modules/next/dist/bin/next", "dev"],
+      "env": {
+        "PATH": "/Users/ehsantarighat/pinokio/bin/miniconda/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+      },
+      "port": 3000
+    }
+  ]
+}
