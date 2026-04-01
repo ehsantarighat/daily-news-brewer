@@ -9,8 +9,10 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
 import type { Topic } from '@/lib/types'
+import { useLocale } from '@/components/locale-provider'
 
 export default function TopicsPage() {
+  const { t } = useLocale()
   const [topics, setTopics] = useState<Topic[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -45,27 +47,25 @@ export default function TopicsPage() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
-    const existing = topics.find((t) => t.name === name)
+    const existing = topics.find((topic) => topic.name === name)
 
     if (existing) {
-      // Toggle active state
       if (existing.active && activeCount <= 1) {
-        toast.error('You must have at least one topic active.')
+        toast.error(t('topics.errorMinOne'))
         return
       }
       const newActive = !existing.active
       if (newActive && atMax) {
-        toast.error(`You can have at most ${MAX_TOPICS} topics.`)
+        toast.error(t('topics.errorAtMax', { max: MAX_TOPICS }))
         return
       }
       await supabase.from('topics').update({ active: newActive }).eq('id', existing.id)
       setTopics((prev) =>
-        prev.map((t) => (t.id === existing.id ? { ...t, active: newActive } : t))
+        prev.map((topic) => (topic.id === existing.id ? { ...topic, active: newActive } : topic))
       )
     } else {
-      // Add new preset topic
       if (atMax) {
-        toast.error(`You can have at most ${MAX_TOPICS} topics.`)
+        toast.error(t('topics.errorAtMax', { max: MAX_TOPICS }))
         return
       }
       const { data: newTopic } = await supabase
@@ -82,19 +82,19 @@ export default function TopicsPage() {
     const trimmed = customInput.trim()
 
     if (trimmed.length < 2) {
-      setCustomError('Topic name must be at least 2 characters.')
+      setCustomError(t('topics.errorMinLength'))
       return
     }
     if (trimmed.length > 60) {
-      setCustomError('Topic name must be 60 characters or fewer.')
+      setCustomError(t('topics.errorMaxLength'))
       return
     }
     if (activeNames.some((n) => n.toLowerCase() === trimmed.toLowerCase())) {
-      setCustomError('You already have this topic.')
+      setCustomError(t('topics.errorDuplicate'))
       return
     }
     if (atMax) {
-      setCustomError(`You can have at most ${MAX_TOPICS} topics.`)
+      setCustomError(t('topics.errorAtMax', { max: MAX_TOPICS }))
       return
     }
 
@@ -110,23 +110,23 @@ export default function TopicsPage() {
 
     setSaving(false)
     if (error) {
-      setCustomError('Failed to add topic.')
+      setCustomError(t('topics.errorFailed'))
       return
     }
 
     setTopics((prev) => [...prev, newTopic as Topic])
     setCustomInput('')
-    toast.success(`"${trimmed}" added to your topics.`)
+    toast.success(t('topics.added', { name: trimmed }))
   }
 
   async function deleteTopic(topicId: string, topicName: string) {
-    if (activeCount <= 1 && activeTopics.find((t) => t.id === topicId)) {
-      toast.error('You must have at least one topic active.')
+    if (activeCount <= 1 && activeTopics.find((topic) => topic.id === topicId)) {
+      toast.error(t('topics.errorMinOne'))
       return
     }
     await supabase.from('topics').delete().eq('id', topicId)
-    setTopics((prev) => prev.filter((t) => t.id !== topicId))
-    toast.success(`"${topicName}" removed.`)
+    setTopics((prev) => prev.filter((topic) => topic.id !== topicId))
+    toast.success(t('topics.removed', { name: topicName }))
   }
 
   if (loading) {
@@ -142,20 +142,22 @@ export default function TopicsPage() {
     )
   }
 
-  const customTopicNames = topics.filter((t) => t.is_custom).map((t) => t.name)
+  const customTopicNames = topics.filter((topic) => topic.is_custom).map((topic) => topic.name)
 
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Manage Topics</h1>
-        <p className="text-sm text-gray-500 mt-1">Select up to {MAX_TOPICS} topics for your daily briefing.</p>
+        <h1 className="text-2xl font-bold text-gray-900">{t('topics.title')}</h1>
+        <p className="text-sm text-gray-500 mt-1">{t('topics.subtitle', { max: MAX_TOPICS })}</p>
       </div>
 
       {/* Count & active topics */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <span className="text-sm font-medium text-gray-700">
-            <span className={atMax ? 'text-indigo-600 font-bold' : ''}>{activeCount}</span>/{MAX_TOPICS} topics active
+            <span className={atMax ? 'text-indigo-600 font-bold' : ''}>
+              {t('topics.activeCount', { count: activeCount, max: MAX_TOPICS })}
+            </span>
           </span>
         </div>
 
@@ -168,12 +170,12 @@ export default function TopicsPage() {
                 className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700"
               >
                 {topic.name}
-                {topic.is_custom && <Badge variant="secondary" className="text-[9px] px-1 py-0 h-auto">custom</Badge>}
+                {topic.is_custom && <Badge variant="secondary" className="text-[9px] px-1 py-0 h-auto">{t('topics.customBadge')}</Badge>}
                 <button
                   type="button"
                   onClick={() => deleteTopic(topic.id, topic.name)}
                   className="ml-0.5 text-indigo-400 hover:text-red-500 transition-colors font-bold"
-                  aria-label={`Remove ${topic.name}`}
+                  aria-label={`${t('common.remove')} ${topic.name}`}
                 >
                   ×
                 </button>
@@ -185,7 +187,7 @@ export default function TopicsPage() {
 
       {/* Preset topics grid */}
       <div>
-        <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">Preset Topics</h2>
+        <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">{t('topics.presetTopics')}</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
           {PRESET_TOPICS.map((name) => (
             <TopicCard
@@ -202,7 +204,7 @@ export default function TopicsPage() {
       {/* Custom topics in grid */}
       {customTopicNames.length > 0 && (
         <div>
-          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">Custom Topics</h2>
+          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">{t('topics.customTopics')}</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
             {customTopicNames.map((name) => (
               <TopicCard
@@ -220,7 +222,7 @@ export default function TopicsPage() {
 
       {/* Add custom topic */}
       <div>
-        <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">Add Custom Topic</h2>
+        <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">{t('topics.addCustomTopic')}</h2>
         <div className="flex gap-2 max-w-sm">
           <Input
             value={customInput}
@@ -228,7 +230,7 @@ export default function TopicsPage() {
               setCustomInput(e.target.value)
               setCustomError(null)
             }}
-            placeholder="e.g. Central Asia fintech"
+            placeholder={t('topics.addPlaceholder')}
             maxLength={60}
             onKeyDown={(e) => e.key === 'Enter' && addCustomTopic()}
           />
@@ -237,11 +239,11 @@ export default function TopicsPage() {
             disabled={saving || !customInput.trim() || atMax}
             className="bg-indigo-600 hover:bg-indigo-700 shrink-0"
           >
-            Add
+            {t('common.add')}
           </Button>
         </div>
         {customError && <p className="mt-1.5 text-xs text-red-600">{customError}</p>}
-        {atMax && <p className="mt-1.5 text-xs text-amber-600">Maximum {MAX_TOPICS} topics reached. Remove one to add another.</p>}
+        {atMax && <p className="mt-1.5 text-xs text-amber-600">{t('topics.atMax', { max: MAX_TOPICS })}</p>}
       </div>
     </div>
   )

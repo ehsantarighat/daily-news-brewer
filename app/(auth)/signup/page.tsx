@@ -8,9 +8,11 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { useLocale } from '@/components/locale-provider'
 
 export default function SignupPage() {
   const router = useRouter()
+  const { t } = useLocale()
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -64,7 +66,7 @@ export default function SignupPage() {
         router.push('/onboarding/topics')
       }
     } catch (err) {
-      setError('An unexpected error occurred. Please try again.')
+      setError(t('signup.errorUnexpected'))
       console.error(err)
     } finally {
       setLoading(false)
@@ -75,26 +77,26 @@ export default function SignupPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="text-2xl font-bold text-indigo-600 mb-1">Daily News Brewer</div>
-          <CardTitle className="text-xl">Create your account</CardTitle>
-          <CardDescription>Get your personalized news briefing every morning</CardDescription>
+          <div className="text-2xl font-bold text-indigo-600 mb-1">{t('common.appName')}</div>
+          <CardTitle className="text-xl">{t('signup.title')}</CardTitle>
+          <CardDescription>{t('signup.subtitle')}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="fullName">Full name</Label>
+              <Label htmlFor="fullName">{t('signup.fullName')}</Label>
               <Input
                 id="fullName"
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                placeholder="Jane Smith"
+                placeholder={t('signup.fullNamePlaceholder')}
                 required
                 autoComplete="name"
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('signup.email')}</Label>
               <Input
                 id="email"
                 type="email"
@@ -106,13 +108,13 @@ export default function SignupPage() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t('signup.password')}</Label>
               <Input
                 id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Min. 6 characters"
+                placeholder={t('signup.passwordPlaceholder')}
                 required
                 minLength={6}
                 autoComplete="new-password"
@@ -124,14 +126,14 @@ export default function SignupPage() {
               </div>
             )}
             <Button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700" disabled={loading}>
-              {loading ? 'Creating account…' : 'Create account — Start free trial'}
+              {loading ? t('signup.creating') : t('signup.createBtn')}
             </Button>
           </form>
         </CardContent>
         <CardFooter className="justify-center text-sm text-muted-foreground">
-          Already have an account?{' '}
+          {t('signup.alreadyHaveAccount')}{' '}
           <Link href="/login" className="ml-1 text-indigo-600 hover:underline font-medium">
-            Sign in
+            {t('common.signIn')}
           </Link>
         </CardFooter>
       </Card>

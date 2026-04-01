@@ -8,9 +8,11 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { useLocale } from '@/components/locale-provider'
 
 export default function LoginPage() {
   const router = useRouter()
+  const { t } = useLocale()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -26,14 +28,14 @@ export default function LoginPage() {
       const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
 
       if (signInError) {
-        setError('Invalid email or password. Please try again.')
+        setError(t('login.errorInvalid'))
         return
       }
 
       router.push('/dashboard')
       router.refresh()
     } catch {
-      setError('An unexpected error occurred. Please try again.')
+      setError(t('login.errorUnexpected'))
     } finally {
       setLoading(false)
     }
@@ -43,14 +45,14 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="text-2xl font-bold text-indigo-600 mb-1">Daily News Brewer</div>
-          <CardTitle className="text-xl">Welcome back</CardTitle>
-          <CardDescription>Sign in to access your daily briefing</CardDescription>
+          <div className="text-2xl font-bold text-indigo-600 mb-1">{t('common.appName')}</div>
+          <CardTitle className="text-xl">{t('login.welcomeBack')}</CardTitle>
+          <CardDescription>{t('login.subtitle')}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('login.email')}</Label>
               <Input
                 id="email"
                 type="email"
@@ -62,13 +64,13 @@ export default function LoginPage() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t('login.password')}</Label>
               <Input
                 id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Your password"
+                placeholder={t('login.passwordPlaceholder')}
                 required
                 autoComplete="current-password"
               />
@@ -79,14 +81,14 @@ export default function LoginPage() {
               </div>
             )}
             <Button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700" disabled={loading}>
-              {loading ? 'Signing in…' : 'Sign in'}
+              {loading ? t('login.signingIn') : t('common.signIn')}
             </Button>
           </form>
         </CardContent>
         <CardFooter className="justify-center text-sm text-muted-foreground">
-          Don&apos;t have an account?{' '}
+          {t('login.noAccount')}{' '}
           <Link href="/signup" className="ml-1 text-indigo-600 hover:underline font-medium">
-            Sign up free
+            {t('login.signUpFree')}
           </Link>
         </CardFooter>
       </Card>

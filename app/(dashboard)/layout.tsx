@@ -2,28 +2,57 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { DarkModeToggle } from '@/components/dark-mode-toggle'
+import { LanguageSwitcher } from '@/components/language-switcher'
+import { getLocale } from '@/lib/i18n/getLocale'
+import { getMessages, createTranslator } from '@/lib/i18n/translate'
 
 async function DashboardNav({ email }: { email: string }) {
+  const locale = await getLocale()
+  const messages = getMessages(locale)
+  const t = createTranslator(messages)
+
   return (
     <nav className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
-      <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-        <Link href="/dashboard" className="text-lg font-bold text-indigo-600">
-          Daily News Brewer
+      <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between gap-4">
+
+        {/* Logo */}
+        <Link href="/dashboard" className="text-base font-bold text-indigo-600 shrink-0">
+          {t('common.appName')}
         </Link>
-        <div className="flex items-center gap-6 text-sm">
-          <Link href="/dashboard/topics" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100">
-            Topics
+
+        {/* Nav links */}
+        <div className="hidden sm:flex items-center gap-5 text-sm">
+          <Link href="/dashboard/topics"   className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">{t('nav.topics')}</Link>
+          <Link href="/dashboard/timeline" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">{t('nav.timeline')}</Link>
+          <Link href="/dashboard/blogs"    className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">{t('nav.blogs')}</Link>
+          <Link href="/dashboard/archive"  className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">{t('nav.archive')}</Link>
+          <Link href="/dashboard/billing"  className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">{t('nav.billing')}</Link>
+        </div>
+
+        {/* Right side */}
+        <div className="flex items-center gap-2 ml-auto">
+          {/* Search icon */}
+          <Link
+            href="/dashboard/search"
+            className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            aria-label={t('nav.searchNews')}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
           </Link>
-          <Link href="/dashboard/billing" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100">
-            Billing
-          </Link>
-          <span className="text-gray-400 text-xs truncate max-w-[180px]">{email}</span>
+
+          <span className="hidden md:block text-gray-400 dark:text-gray-500 text-xs truncate max-w-[140px]">{email}</span>
+
           <form action="/api/auth/logout" method="POST">
             <button type="submit" className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-xs underline">
-              Sign out
+              {t('nav.signOut')}
             </button>
           </form>
+
           <DarkModeToggle />
+          <LanguageSwitcher />
         </div>
       </div>
     </nav>

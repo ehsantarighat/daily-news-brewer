@@ -5,15 +5,19 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import type { Subscription, Topic, Briefing } from '@/lib/types'
+import { getLocale } from '@/lib/i18n/getLocale'
+import { getMessages, createTranslator } from '@/lib/i18n/translate'
 
-function SubscriptionBadge({ sub }: { sub: Subscription | null }) {
-  if (!sub) return <Badge variant="secondary">No plan</Badge>
+type Translator = (key: string, params?: Record<string, string | number>) => string
+
+function SubscriptionBadge({ sub, t }: { sub: Subscription | null; t: Translator }) {
+  if (!sub) return <Badge variant="secondary">{t('dashboard.noPlan')}</Badge>
 
   const statusMap: Record<string, { label: string; className: string }> = {
-    trialing: { label: 'Free Trial', className: 'bg-blue-100 text-blue-700 border-blue-200' },
-    active: { label: 'Active', className: 'bg-green-100 text-green-700 border-green-200' },
-    canceled: { label: 'Canceled', className: 'bg-gray-100 text-gray-600 border-gray-200' },
-    past_due: { label: 'Past Due', className: 'bg-red-100 text-red-700 border-red-200' },
+    trialing: { label: t('dashboard.statusTrialing'), className: 'bg-blue-100 text-blue-700 border-blue-200' },
+    active: { label: t('dashboard.statusActive'), className: 'bg-green-100 text-green-700 border-green-200' },
+    canceled: { label: t('dashboard.statusCanceled'), className: 'bg-gray-100 text-gray-600 border-gray-200' },
+    past_due: { label: t('dashboard.statusPastDue'), className: 'bg-red-100 text-red-700 border-red-200' },
   }
 
   const s = statusMap[sub.status ?? ''] ?? { label: sub.status ?? 'Unknown', className: '' }
@@ -25,7 +29,7 @@ function SubscriptionBadge({ sub }: { sub: Subscription | null }) {
   )
 }
 
-function TrialBanner({ sub }: { sub: Subscription | null }) {
+function TrialBanner({ sub, t }: { sub: Subscription | null; t: Translator }) {
   if (!sub || sub.status !== 'trialing' || !sub.trial_ends_at) return null
 
   const trialEnd = new Date(sub.trial_ends_at)
@@ -35,10 +39,10 @@ function TrialBanner({ sub }: { sub: Subscription | null }) {
   if (daysLeft === 0) {
     return (
       <div className="rounded-lg bg-amber-50 border border-amber-200 p-4 flex items-center justify-between">
-        <p className="text-sm text-amber-800 font-medium">Your free trial has expired.</p>
+        <p className="text-sm text-amber-800 font-medium">{t('dashboard.trialExpired')}</p>
         <Link href="/dashboard/billing">
           <Button size="sm" className="bg-amber-600 hover:bg-amber-700 text-white">
-            Subscribe Now
+            {t('dashboard.subscribeNow')}
           </Button>
         </Link>
       </div>
@@ -48,18 +52,22 @@ function TrialBanner({ sub }: { sub: Subscription | null }) {
   return (
     <div className="rounded-lg bg-blue-50 border border-blue-200 p-4 flex items-center justify-between">
       <p className="text-sm text-blue-800">
-        <span className="font-semibold">{daysLeft} day{daysLeft !== 1 ? 's' : ''} left</span> in your free trial.
+        <span className="font-semibold">
+          {daysLeft === 1
+            ? t('dashboard.daysLeft', { count: daysLeft })
+            : t('dashboard.daysLeftPlural', { count: daysLeft })}
+        </span>
       </p>
       <Link href="/dashboard/billing">
         <Button size="sm" variant="outline" className="border-blue-300 text-blue-700 hover:bg-blue-100">
-          View plans
+          {t('dashboard.viewPlans')}
         </Button>
       </Link>
     </div>
   )
 }
 
-function TodaysBriefingCard({ briefing }: { briefing: Briefing | null }) {
+function TodaysBriefingCard({ briefing, t }: { briefing: Briefing | null; t: Translator }) {
   const today = new Date().toDateString()
   const isToday = briefing && briefing.delivered_at
     ? new Date(briefing.delivered_at).toDateString() === today
@@ -69,10 +77,10 @@ function TodaysBriefingCard({ briefing }: { briefing: Briefing | null }) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Today&apos;s Briefing</CardTitle>
+          <CardTitle className="text-base">{t('dashboard.todaysBriefing')}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-gray-500">Your next briefing arrives tomorrow at 7:00 AM UTC.</p>
+          <p className="text-sm text-gray-500">{t('dashboard.nextBriefing')}</p>
         </CardContent>
       </Card>
     )
@@ -82,15 +90,15 @@ function TodaysBriefingCard({ briefing }: { briefing: Briefing | null }) {
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-base">Today&apos;s Briefing</CardTitle>
+          <CardTitle className="text-base">{t('dashboard.todaysBriefing')}</CardTitle>
           <span className="text-xs font-medium text-green-600 bg-green-50 border border-green-200 rounded-full px-2 py-0.5">
-            Delivered ✓
+            {t('dashboard.delivered')}
           </span>
         </div>
       </CardHeader>
       <CardContent className="space-y-2">
         <p className="text-sm font-medium text-gray-800">{briefing.subject}</p>
-        <p className="text-xs text-gray-500">{briefing.articles_count} articles · {new Date(briefing.delivered_at!).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+        <p className="text-xs text-gray-500">{t('archive.articles', { count: briefing.articles_count ?? 0 })} · {new Date(briefing.delivered_at!).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
       </CardContent>
     </Card>
   )
@@ -101,6 +109,10 @@ export default async function DashboardPage() {
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) redirect('/login')
+
+  const locale = await getLocale()
+  const messages = getMessages(locale)
+  const t = createTranslator(messages)
 
   const [profileResult, subResult, topicsResult, briefingResult] = await Promise.all([
     supabase.from('profiles').select('*').eq('id', user.id).single(),
@@ -128,34 +140,34 @@ export default async function DashboardPage() {
       {/* Greeting */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Good morning, {firstName}!</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Here&apos;s your Daily News Brewer dashboard</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('dashboard.greeting', { name: firstName })}</h1>
+          <p className="text-sm text-gray-500 mt-0.5">{t('dashboard.subtitle')}</p>
         </div>
-        <SubscriptionBadge sub={subscription} />
+        <SubscriptionBadge sub={subscription} t={t} />
       </div>
 
       {/* Trial banner */}
-      <TrialBanner sub={subscription} />
+      <TrialBanner sub={subscription} t={t} />
 
       {/* Today's briefing */}
-      <TodaysBriefingCard briefing={latestBriefing} />
+      <TodaysBriefingCard briefing={latestBriefing} t={t} />
 
       {/* Topics */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-base">Your Topics ({topics.length}/10)</CardTitle>
+            <CardTitle className="text-base">{t('dashboard.yourTopics', { count: topics.length })}</CardTitle>
             <Link href="/dashboard/topics">
-              <Button variant="outline" size="sm">Manage Topics</Button>
+              <Button variant="outline" size="sm">{t('dashboard.manageTopics')}</Button>
             </Link>
           </div>
         </CardHeader>
         <CardContent>
           {topics.length === 0 ? (
             <div className="text-center py-4">
-              <p className="text-sm text-gray-500 mb-3">No topics yet. Add some to start receiving briefings.</p>
+              <p className="text-sm text-gray-500 mb-3">{t('dashboard.noTopicsYet')}</p>
               <Link href="/dashboard/topics">
-                <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700">Add Topics</Button>
+                <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700">{t('dashboard.addTopics')}</Button>
               </Link>
             </div>
           ) : (
@@ -167,7 +179,7 @@ export default async function DashboardPage() {
                 >
                   {topic.name}
                   {topic.is_custom && (
-                    <span className="text-indigo-500 font-semibold">·custom</span>
+                    <span className="text-indigo-500 font-semibold">·{t('topics.customBadge')}</span>
                   )}
                 </span>
               ))}
@@ -178,19 +190,35 @@ export default async function DashboardPage() {
 
       {/* Quick links */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <Link href="/dashboard/timeline">
+          <Card className="hover:border-indigo-200 hover:bg-indigo-50/30 transition-colors cursor-pointer">
+            <CardContent className="p-4">
+              <div className="text-sm font-semibold text-gray-800">{t('dashboard.quickLinks.timeline')}</div>
+              <div className="text-xs text-gray-500 mt-0.5">{t('dashboard.quickLinks.timelineDesc')}</div>
+            </CardContent>
+          </Card>
+        </Link>
         <Link href="/dashboard/topics">
           <Card className="hover:border-indigo-200 hover:bg-indigo-50/30 transition-colors cursor-pointer">
             <CardContent className="p-4">
-              <div className="text-sm font-semibold text-gray-800">Manage Topics</div>
-              <div className="text-xs text-gray-500 mt-0.5">Add, remove, or customize topics</div>
+              <div className="text-sm font-semibold text-gray-800">{t('dashboard.quickLinks.manageTopics')}</div>
+              <div className="text-xs text-gray-500 mt-0.5">{t('dashboard.quickLinks.manageTopicsDesc')}</div>
             </CardContent>
           </Card>
         </Link>
         <Link href="/dashboard/billing">
           <Card className="hover:border-indigo-200 hover:bg-indigo-50/30 transition-colors cursor-pointer">
             <CardContent className="p-4">
-              <div className="text-sm font-semibold text-gray-800">Billing</div>
-              <div className="text-xs text-gray-500 mt-0.5">Manage your subscription</div>
+              <div className="text-sm font-semibold text-gray-800">{t('dashboard.quickLinks.billing')}</div>
+              <div className="text-xs text-gray-500 mt-0.5">{t('dashboard.quickLinks.billingDesc')}</div>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link href="/dashboard/archive">
+          <Card className="hover:border-indigo-200 hover:bg-indigo-50/30 transition-colors cursor-pointer">
+            <CardContent className="p-4">
+              <div className="text-sm font-semibold text-gray-800">{t('dashboard.quickLinks.archive')}</div>
+              <div className="text-xs text-gray-500 mt-0.5">{t('dashboard.quickLinks.archiveDesc')}</div>
             </CardContent>
           </Card>
         </Link>
