@@ -30,6 +30,7 @@
     "blogs": "Blogs",
     "archive": "Archive",
     "billing": "Billing",
+    "profile": "Profile",
     "searchNews": "Search news",
     "signOut": "Sign out",
     "language": "Language"
@@ -219,5 +220,34 @@
     "articles": "{count} articles",
     "backToArchive": "← Back to Archive",
     "loadError": "Failed to load briefing."
+  },
+  "profile": {
+    "title": "Profile",
+    "subtitle": "Manage your account settings",
+    "personalInfo": "Personal Information",
+    "fullName": "Full name",
+    "fullNamePlaceholder": "Jane Smith",
+    "email": "Email",
+    "security": "Security",
+    "newPassword": "New password",
+    "newPasswordPlaceholder": "Min. 6 characters",
+    "confirmPassword": "Confirm password",
+    "confirmPasswordPlaceholder": "Repeat new password",
+    "changePassword": "Change password",
+    "pwdChanged": "Password changed",
+    "pwdMismatch": "Passwords don't match.",
+    "pwdTooShort": "Password must be at least 6 characters.",
+    "nameRequired": "Name is required.",
+    "saveFailed": "Failed to save. Please try again.",
+    "billing": "Billing",
+    "plan": "Plan",
+    "noActivePlan": "No active plan",
+    "nextBilling": "Next billing",
+    "manageBilling": "Manage billing",
+    "upgradeMonthly": "Upgrade — Monthly",
+    "delivery": "Email Delivery",
+    "timezone": "Timezone",
+    "deliveryTime": "Delivery time",
+    "deliverySaved": "Delivery settings saved"
   }
 }

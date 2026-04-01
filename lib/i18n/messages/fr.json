@@ -30,6 +30,7 @@
     "blogs": "Blogs",
     "archive": "Archives",
     "billing": "Facturation",
+    "profile": "Profil",
     "searchNews": "Rechercher des actualités",
     "signOut": "Se déconnecter",
     "language": "Langue"
@@ -219,5 +220,34 @@
     "articles": "{count} articles",
     "backToArchive": "← Retour aux archives",
     "loadError": "Impossible de charger le briefing."
+  },
+  "profile": {
+    "title": "Profil",
+    "subtitle": "Gérez les paramètres de votre compte",
+    "personalInfo": "Informations personnelles",
+    "fullName": "Nom complet",
+    "fullNamePlaceholder": "Jean Dupont",
+    "email": "E-mail",
+    "security": "Sécurité",
+    "newPassword": "Nouveau mot de passe",
+    "newPasswordPlaceholder": "Min. 6 caractères",
+    "confirmPassword": "Confirmer le mot de passe",
+    "confirmPasswordPlaceholder": "Répéter le nouveau mot de passe",
+    "changePassword": "Changer le mot de passe",
+    "pwdChanged": "Mot de passe modifié",
+    "pwdMismatch": "Les mots de passe ne correspondent pas.",
+    "pwdTooShort": "Le mot de passe doit comporter au moins 6 caractères.",
+    "nameRequired": "Le nom est requis.",
+    "saveFailed": "Échec de l'enregistrement. Veuillez réessayer.",
+    "billing": "Facturation",
+    "plan": "Plan",
+    "noActivePlan": "Aucun plan actif",
+    "nextBilling": "Prochaine facturation",
+    "manageBilling": "Gérer la facturation",
+    "upgradeMonthly": "Passer au mensuel",
+    "delivery": "Livraison par e-mail",
+    "timezone": "Fuseau horaire",
+    "deliveryTime": "Heure de livraison",
+    "deliverySaved": "Paramètres de livraison enregistrés"
   }
 }

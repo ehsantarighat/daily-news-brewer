@@ -30,6 +30,7 @@
     "blogs": "Blogs",
     "archive": "Archiv",
     "billing": "Abrechnung",
+    "profile": "Profil",
     "searchNews": "Nachrichten suchen",
     "signOut": "Abmelden",
     "language": "Sprache"
@@ -219,5 +220,34 @@
     "articles": "{count} Artikel",
     "backToArchive": "← Zurück zum Archiv",
     "loadError": "Briefing konnte nicht geladen werden."
+  },
+  "profile": {
+    "title": "Profil",
+    "subtitle": "Kontoeinstellungen verwalten",
+    "personalInfo": "Persönliche Informationen",
+    "fullName": "Vollständiger Name",
+    "fullNamePlaceholder": "Max Mustermann",
+    "email": "E-Mail",
+    "security": "Sicherheit",
+    "newPassword": "Neues Passwort",
+    "newPasswordPlaceholder": "Min. 6 Zeichen",
+    "confirmPassword": "Passwort bestätigen",
+    "confirmPasswordPlaceholder": "Neues Passwort wiederholen",
+    "changePassword": "Passwort ändern",
+    "pwdChanged": "Passwort geändert",
+    "pwdMismatch": "Passwörter stimmen nicht überein.",
+    "pwdTooShort": "Das Passwort muss mindestens 6 Zeichen lang sein.",
+    "nameRequired": "Name ist erforderlich.",
+    "saveFailed": "Speichern fehlgeschlagen. Bitte versuche es erneut.",
+    "billing": "Abrechnung",
+    "plan": "Plan",
+    "noActivePlan": "Kein aktiver Plan",
+    "nextBilling": "Nächste Abrechnung",
+    "manageBilling": "Abrechnung verwalten",
+    "upgradeMonthly": "Upgrade — Monatlich",
+    "delivery": "E-Mail-Zustellung",
+    "timezone": "Zeitzone",
+    "deliveryTime": "Lieferzeit",
+    "deliverySaved": "Zustellungseinstellungen gespeichert"
   }
 }

@@ -26,7 +26,7 @@ async function DashboardNav({ email }: { email: string }) {
           <Link href="/dashboard/timeline" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">{t('nav.timeline')}</Link>
           <Link href="/dashboard/blogs"    className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">{t('nav.blogs')}</Link>
           <Link href="/dashboard/archive"  className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">{t('nav.archive')}</Link>
-          <Link href="/dashboard/billing"  className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">{t('nav.billing')}</Link>
+          <Link href="/dashboard/profile"  className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">{t('nav.profile')}</Link>
         </div>
 
         {/* Right side */}

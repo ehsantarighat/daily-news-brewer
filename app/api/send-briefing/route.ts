@@ -66,6 +66,23 @@ export async function POST(request: NextRequest) {
   let failed = 0
 
   for (const { user_id } of usersToSend) {
+    // Get user profile (email + delivery preferences)
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('email, timezone, delivery_time')
+      .eq('id', user_id)
+      .single()
+
+    if (!profile?.email) continue
+
+    // Check if it's the user's delivery hour in their timezone
+    const userTimezone = profile.timezone ?? 'UTC'
+    const targetHour = parseInt((profile.delivery_time ?? '07:00').split(':')[0])
+    const currentHourInTZ = parseInt(
+      new Date().toLocaleString('en-US', { timeZone: userTimezone, hour: 'numeric', hour12: false })
+    )
+    if (currentHourInTZ !== targetHour) continue
+
     // Create a pending briefing record
     const { data: briefingRecord } = await supabase
       .from('briefings')
@@ -76,15 +93,6 @@ export async function POST(request: NextRequest) {
     if (!briefingRecord) continue
 
     try {
-      // Get user email
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('email')
-        .eq('id', user_id)
-        .single()
-
-      if (!profile?.email) throw new Error('No email found for user')
-
       // Generate briefing
       const result = await generateBriefing(user_id)
       if (!result) throw new Error('generateBriefing returned null')

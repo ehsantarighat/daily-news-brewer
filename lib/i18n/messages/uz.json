@@ -30,6 +30,7 @@
     "blogs": "Bloglar",
     "archive": "Arxiv",
     "billing": "To'lov",
+    "profile": "Profil",
     "searchNews": "Yangiliklar qidirish",
     "signOut": "Chiqish",
     "language": "Til"
@@ -219,5 +220,34 @@
     "articles": "{count} ta maqola",
     "backToArchive": "← Arxivga qaytish",
     "loadError": "Brifingni yuklab bo'lmadi."
+  },
+  "profile": {
+    "title": "Profil",
+    "subtitle": "Hisob sozlamalarini boshqarish",
+    "personalInfo": "Shaxsiy ma'lumotlar",
+    "fullName": "To'liq ism",
+    "fullNamePlaceholder": "Alisher Navoiy",
+    "email": "Elektron pochta",
+    "security": "Xavfsizlik",
+    "newPassword": "Yangi parol",
+    "newPasswordPlaceholder": "Kamida 6 belgi",
+    "confirmPassword": "Parolni tasdiqlash",
+    "confirmPasswordPlaceholder": "Yangi parolni takrorlang",
+    "changePassword": "Parolni o'zgartirish",
+    "pwdChanged": "Parol o'zgartirildi",
+    "pwdMismatch": "Parollar mos kelmadi.",
+    "pwdTooShort": "Parol kamida 6 belgidan iborat bo'lishi kerak.",
+    "nameRequired": "Ism majburiy.",
+    "saveFailed": "Saqlashda xato. Qayta urinib ko'ring.",
+    "billing": "To'lov",
+    "plan": "Reja",
+    "noActivePlan": "Faol reja yo'q",
+    "nextBilling": "Keyingi to'lov",
+    "manageBilling": "To'lovni boshqarish",
+    "upgradeMonthly": "Yangilash — Oylik",
+    "delivery": "Elektron pochta yetkazish",
+    "timezone": "Vaqt mintaqasi",
+    "deliveryTime": "Yetkazish vaqti",
+    "deliverySaved": "Yetkazish sozlamalari saqlandi"
   }
 }

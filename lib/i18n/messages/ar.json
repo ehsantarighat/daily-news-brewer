@@ -30,6 +30,7 @@
     "blogs": "المدونات",
     "archive": "الأرشيف",
     "billing": "الفواتير",
+    "profile": "الملف الشخصي",
     "searchNews": "البحث في الأخبار",
     "signOut": "تسجيل الخروج",
     "language": "اللغة"
@@ -219,5 +220,34 @@
     "articles": "{count} مقالات",
     "backToArchive": "→ العودة إلى الأرشيف",
     "loadError": "فشل تحميل النشرة الإخبارية."
+  },
+  "profile": {
+    "title": "الملف الشخصي",
+    "subtitle": "إدارة إعدادات حسابك",
+    "personalInfo": "المعلومات الشخصية",
+    "fullName": "الاسم الكامل",
+    "fullNamePlaceholder": "محمد علي",
+    "email": "البريد الإلكتروني",
+    "security": "الأمان",
+    "newPassword": "كلمة المرور الجديدة",
+    "newPasswordPlaceholder": "٦ أحرف على الأقل",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "confirmPasswordPlaceholder": "أعد إدخال كلمة المرور الجديدة",
+    "changePassword": "تغيير كلمة المرور",
+    "pwdChanged": "تم تغيير كلمة المرور",
+    "pwdMismatch": "كلمتا المرور غير متطابقتين.",
+    "pwdTooShort": "يجب أن تحتوي كلمة المرور على ٦ أحرف على الأقل.",
+    "nameRequired": "الاسم مطلوب.",
+    "saveFailed": "فشل الحفظ. يرجى المحاولة مرة أخرى.",
+    "billing": "الفواتير",
+    "plan": "خطة",
+    "noActivePlan": "لا توجد خطة نشطة",
+    "nextBilling": "الفاتورة التالية",
+    "manageBilling": "إدارة الفواتير",
+    "upgradeMonthly": "الترقية — شهرياً",
+    "delivery": "تسليم البريد الإلكتروني",
+    "timezone": "المنطقة الزمنية",
+    "deliveryTime": "وقت التسليم",
+    "deliverySaved": "تم حفظ إعدادات التسليم"
   }
 }

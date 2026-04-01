@@ -30,6 +30,7 @@
     "blogs": "Bloglar",
     "archive": "Arşiv",
     "billing": "Fatura",
+    "profile": "Profil",
     "searchNews": "Haber ara",
     "signOut": "Çıkış yap",
     "language": "Dil"
@@ -219,5 +220,34 @@
     "articles": "{count} makale",
     "backToArchive": "← Arşive geri dön",
     "loadError": "Brifing yüklenemedi."
+  },
+  "profile": {
+    "title": "Profil",
+    "subtitle": "Hesap ayarlarınızı yönetin",
+    "personalInfo": "Kişisel Bilgiler",
+    "fullName": "Ad soyad",
+    "fullNamePlaceholder": "Ahmet Yılmaz",
+    "email": "E-posta",
+    "security": "Güvenlik",
+    "newPassword": "Yeni şifre",
+    "newPasswordPlaceholder": "En az 6 karakter",
+    "confirmPassword": "Şifreyi onayla",
+    "confirmPasswordPlaceholder": "Yeni şifreyi tekrarla",
+    "changePassword": "Şifreyi değiştir",
+    "pwdChanged": "Şifre değiştirildi",
+    "pwdMismatch": "Şifreler eşleşmiyor.",
+    "pwdTooShort": "Şifre en az 6 karakter olmalıdır.",
+    "nameRequired": "Ad zorunludur.",
+    "saveFailed": "Kaydedilemedi. Lütfen tekrar dene.",
+    "billing": "Fatura",
+    "plan": "Plan",
+    "noActivePlan": "Aktif plan yok",
+    "nextBilling": "Sonraki fatura",
+    "manageBilling": "Faturalamayı yönet",
+    "upgradeMonthly": "Yükselt — Aylık",
+    "delivery": "E-posta Teslimi",
+    "timezone": "Saat dilimi",
+    "deliveryTime": "Teslimat saati",
+    "deliverySaved": "Teslimat ayarları kaydedildi"
   }
 }

@@ -30,6 +30,7 @@
     "blogs": "Блоги",
     "archive": "Архив",
     "billing": "Оплата",
+    "profile": "Профиль",
     "searchNews": "Поиск новостей",
     "signOut": "Выйти",
     "language": "Язык"
@@ -219,5 +220,34 @@
     "articles": "{count} статей",
     "backToArchive": "← Назад к архиву",
     "loadError": "Не удалось загрузить брифинг."
+  },
+  "profile": {
+    "title": "Профиль",
+    "subtitle": "Управление настройками аккаунта",
+    "personalInfo": "Личная информация",
+    "fullName": "Полное имя",
+    "fullNamePlaceholder": "Иван Иванов",
+    "email": "Электронная почта",
+    "security": "Безопасность",
+    "newPassword": "Новый пароль",
+    "newPasswordPlaceholder": "Минимум 6 символов",
+    "confirmPassword": "Подтвердите пароль",
+    "confirmPasswordPlaceholder": "Повторите новый пароль",
+    "changePassword": "Изменить пароль",
+    "pwdChanged": "Пароль изменён",
+    "pwdMismatch": "Пароли не совпадают.",
+    "pwdTooShort": "Пароль должен содержать не менее 6 символов.",
+    "nameRequired": "Имя обязательно.",
+    "saveFailed": "Не удалось сохранить. Попробуйте снова.",
+    "billing": "Оплата",
+    "plan": "план",
+    "noActivePlan": "Нет активного плана",
+    "nextBilling": "Следующий платёж",
+    "manageBilling": "Управление оплатой",
+    "upgradeMonthly": "Оплатить ежемесячно",
+    "delivery": "Доставка по почте",
+    "timezone": "Часовой пояс",
+    "deliveryTime": "Время доставки",
+    "deliverySaved": "Настройки доставки сохранены"
   }
 }

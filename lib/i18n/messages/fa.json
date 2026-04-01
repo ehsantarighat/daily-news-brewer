@@ -30,6 +30,7 @@
     "blogs": "وبلاگ‌ها",
     "archive": "آرشیو",
     "billing": "صورت‌حساب",
+    "profile": "پروفایل",
     "searchNews": "جستجوی اخبار",
     "signOut": "خروج",
     "language": "زبان"
@@ -219,5 +220,34 @@
     "articles": "{count} مقاله",
     "backToArchive": "→ بازگشت به آرشیو",
     "loadError": "بارگذاری خلاصه اخبار ناموفق بود."
+  },
+  "profile": {
+    "title": "پروفایل",
+    "subtitle": "تنظیمات حساب کاربری خود را مدیریت کنید",
+    "personalInfo": "اطلاعات شخصی",
+    "fullName": "نام کامل",
+    "fullNamePlaceholder": "علی محمدی",
+    "email": "ایمیل",
+    "security": "امنیت",
+    "newPassword": "رمز عبور جدید",
+    "newPasswordPlaceholder": "حداقل ۶ کاراکتر",
+    "confirmPassword": "تأیید رمز عبور",
+    "confirmPasswordPlaceholder": "رمز عبور جدید را تکرار کنید",
+    "changePassword": "تغییر رمز عبور",
+    "pwdChanged": "رمز عبور تغییر یافت",
+    "pwdMismatch": "رمزهای عبور مطابقت ندارند.",
+    "pwdTooShort": "رمز عبور باید حداقل ۶ کاراکتر باشد.",
+    "nameRequired": "نام الزامی است.",
+    "saveFailed": "ذخیره ناموفق بود. لطفاً دوباره امتحان کنید.",
+    "billing": "صورت‌حساب",
+    "plan": "طرح",
+    "noActivePlan": "هیچ طرح فعالی وجود ندارد",
+    "nextBilling": "صورت‌حساب بعدی",
+    "manageBilling": "مدیریت صورت‌حساب",
+    "upgradeMonthly": "ارتقا — ماهانه",
+    "delivery": "تحویل ایمیل",
+    "timezone": "منطقه زمانی",
+    "deliveryTime": "زمان تحویل",
+    "deliverySaved": "تنظیمات تحویل ذخیره شد"
   }
 }
