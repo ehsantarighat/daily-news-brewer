@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(claude-api)",
+      "Skill(claude-api:*)",
+      "Bash(npx create-next-app@latest . --typescript --tailwind --app --yes --no-git --eslint)",
+      "Bash(npm --version)",
+      "Bash(export PATH=\"$PATH:/usr/local/bin:/opt/homebrew/bin:/usr/bin\")",
+      "Read(//opt/homebrew/bin/**)",
+      "Read(//usr/local/bin/**)",
+      "Read(//Users/ehsantarighat/.nvm/versions/**)",
+      "Read(//Users/**)",
+      "Bash(export PATH=\"/Users/ehsantarighat/pinokio/bin/miniconda/bin:$PATH\")",
+      "Bash(npx --version)",
+      "Bash(npx create-next-app@latest . --typescript --tailwind --app --yes --no-git --eslint --src-dir=false --import-alias=\"@/*\")",
+      "Bash(npx create-next-app@latest daily-news-brewer --typescript --tailwind --app --yes --no-git --eslint --src-dir=false --import-alias=\"@/*\")",
+      "Bash(cp -r /Users/ehsantarighat/Documents/daily-news-brewer/. \"/Users/ehsantarighat/Documents/Daily News Brewer/\")",
+      "Bash(rm -rf /Users/ehsantarighat/Documents/daily-news-brewer)",
+      "Bash(npm install:*)",
+      "Bash(npx shadcn@latest init --yes --base-color slate --css-variables)",
+      "Bash(npx shadcn@latest init -d)"
+    ]
+  }
+}
