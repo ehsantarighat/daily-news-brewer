@@ -26,6 +26,14 @@ async function DashboardNav({ email }: { email: string }) {
           <Link href="/dashboard/blogs"    className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">{t('nav.blogs')}</Link>
           <Link href="/dashboard/archive"  className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">{t('nav.archive')}</Link>
           <Link href="/dashboard/profile"  className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">{t('nav.profile')}</Link>
+          <a
+            href="https://ko-fi.com/YOUR_KOFI_USERNAME"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FF5E5B] hover:bg-[#e54e4b] text-white text-xs font-semibold transition-colors shadow-sm"
+          >
+            ☕ Support us
+          </a>
         </div>
 
         {/* Right side */}

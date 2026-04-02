@@ -52,15 +52,6 @@ export default function SignupPage() {
           console.error('Profile creation error:', profileError)
         }
 
-        const trialEndsAt = new Date()
-        trialEndsAt.setDate(trialEndsAt.getDate() + 7)
-
-        await supabase.from('subscriptions').insert({
-          user_id: data.user.id,
-          status: 'trialing',
-          trial_ends_at: trialEndsAt.toISOString(),
-        })
-
         router.push('/onboarding/topics')
       }
     } catch (err) {

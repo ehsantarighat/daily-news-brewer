@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useLocale } from '@/components/locale-provider'
-import Link from 'next/link'
 
 // ─── Avatar ───────────────────────────────────────────────────────────────────
 
@@ -141,13 +140,6 @@ export default function ProfilePage() {
   const [deliverySaved,   setDeliverySaved]   = useState(false)
   const [deliveryError,   setDeliveryError]   = useState<string | null>(null)
 
-  // Billing state
-  const [subStatus,    setSubStatus]    = useState<string | null>(null)
-  const [trialDays,    setTrialDays]    = useState<number | null>(null)
-  const [nextBilling,  setNextBilling]  = useState<string | null>(null)
-  const [stripeSubId,  setStripeSubId]  = useState<string | null>(null)
-  const [plan,         setPlan]         = useState<string | null>(null)
-
   useEffect(() => {
     async function load() {
       const { data: { user } } = await supabase.auth.getUser()
@@ -167,24 +159,6 @@ export default function ProfilePage() {
         setDeliveryHour(profile.delivery_time ?? '07:00')
       }
 
-      // Load subscription
-      const { data: sub } = await supabase
-        .from('subscriptions')
-        .select('status, plan, trial_ends_at, current_period_end, stripe_subscription_id')
-        .eq('user_id', user.id)
-        .single()
-      if (sub) {
-        setSubStatus(sub.status)
-        setPlan(sub.plan)
-        setStripeSubId(sub.stripe_subscription_id)
-        if (sub.current_period_end) {
-          setNextBilling(new Date(sub.current_period_end).toLocaleDateString())
-        }
-        if (sub.status === 'trialing' && sub.trial_ends_at) {
-          const days = Math.max(0, Math.ceil((new Date(sub.trial_ends_at).getTime() - Date.now()) / 86400000))
-          setTrialDays(days)
-        }
-      }
     }
     load()
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -263,22 +237,6 @@ export default function ProfilePage() {
     setConfirmPwd('')
     setPwdSaved(true)
     setTimeout(() => setPwdSaved(false), 2500)
-  }
-
-  // ── Status badge ───────────────────────────────────────────────────────────
-
-  const statusColour: Record<string, string> = {
-    trialing: 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800',
-    active:   'bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800',
-    canceled: 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700',
-    past_due: 'bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800',
-  }
-
-  const statusLabel: Record<string, string> = {
-    trialing: t('dashboard.statusTrialing'),
-    active:   t('dashboard.statusActive'),
-    canceled: t('dashboard.statusCanceled'),
-    past_due: t('dashboard.statusPastDue'),
   }
 
   return (
@@ -405,62 +363,6 @@ export default function ProfilePage() {
             {deliverySaved ? '✓ ' + t('profile.deliverySaved') : savingDelivery ? t('common.loading') : t('common.save')}
           </button>
           {deliveryError && <p className="text-xs text-red-500">{deliveryError}</p>}
-        </div>
-      </Section>
-
-      {/* Billing */}
-      <Section title={t('profile.billing')}>
-        <div className="space-y-4">
-          {/* Current plan row */}
-          <div className="flex items-center gap-3 flex-wrap">
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300 capitalize">
-              {plan ? `${plan} ${t('profile.plan')}` : t('profile.noActivePlan')}
-            </span>
-            {subStatus && (
-              <span className={`text-xs font-semibold rounded-full border px-2.5 py-0.5 ${statusColour[subStatus] ?? ''}`}>
-                {statusLabel[subStatus] ?? subStatus}
-              </span>
-            )}
-          </div>
-
-          {/* Trial info */}
-          {trialDays !== null && (
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {trialDays > 0
-                ? t('dashboard.daysLeftPlural', { count: trialDays })
-                : t('dashboard.trialExpired')}
-            </p>
-          )}
-
-          {/* Next billing */}
-          {nextBilling && subStatus === 'active' && (
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              {t('profile.nextBilling')}: {nextBilling}
-            </p>
-          )}
-
-          {/* Actions */}
-          <div className="flex flex-wrap gap-2">
-            {stripeSubId && (
-              <Link
-                href="/api/stripe/portal"
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-              >
-                {t('profile.manageBilling')} →
-              </Link>
-            )}
-            {(!subStatus || subStatus !== 'active') && (
-              <form action="/api/stripe/checkout" method="POST" className="inline">
-                <input type="hidden" name="priceId" value={process.env.NEXT_PUBLIC_STRIPE_MONTHLY_PRICE_ID ?? ''} />
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl transition-colors"
-                >
-                  {t('profile.upgradeMonthly')}
-                </button>
-              </form>
-            )}
-          </div>
         </div>
       </Section>
 
