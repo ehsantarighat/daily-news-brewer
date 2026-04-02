@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import type { BlogPost } from '@/app/api/blogs/route'
 import { useLocale } from '@/components/locale-provider'
+import { BlogStoriesStrip } from '@/components/news-stories-strip'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -487,6 +488,9 @@ export default function BlogsPage() {
           </button>
         </div>
       </div>
+
+      {/* Stories strip */}
+      {!loading && <BlogStoriesStrip />}
 
       {/* AI Summary */}
       {!loading && (summary || summaryLoading) && filtered.length > 0 && (

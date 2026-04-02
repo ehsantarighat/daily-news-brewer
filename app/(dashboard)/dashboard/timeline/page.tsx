@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef, useMemo, useTransition } from
 import { createClient } from '@/lib/supabase/client'
 import type { Article } from '@/lib/news/fetchArticles'
 import { useLocale } from '@/components/locale-provider'
+import { NewsStoriesStrip } from '@/components/news-stories-strip'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -544,6 +545,9 @@ export default function TimelinePage() {
           {refreshing ? t('common.refreshing') : t('common.refresh')}
         </button>
       </div>
+
+      {/* Stories strip */}
+      {!loading && topics.length > 0 && <NewsStoriesStrip />}
 
       {/* AI Summary */}
       {!loading && (summary || summaryLoading) && filtered.length > 0 && (
