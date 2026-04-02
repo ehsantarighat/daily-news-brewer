@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { DarkModeToggle } from '@/components/dark-mode-toggle'
-import { LanguageSwitcher } from '@/components/language-switcher'
 import { getLocale } from '@/lib/i18n/getLocale'
 import { getMessages, createTranslator } from '@/lib/i18n/translate'
 
@@ -24,7 +23,6 @@ export default async function LandingPage() {
               <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700">{t('common.startFreeTrial')}</Button>
             </Link>
             <DarkModeToggle />
-            <LanguageSwitcher />
           </div>
         </div>
       </nav>

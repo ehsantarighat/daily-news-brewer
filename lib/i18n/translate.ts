@@ -1,17 +1,9 @@
 import type { Locale } from './index'
-
 import en from './messages/en.json'
-import fr from './messages/fr.json'
-import ru from './messages/ru.json'
-import fa from './messages/fa.json'
-import ar from './messages/ar.json'
-import de from './messages/de.json'
-import tr from './messages/tr.json'
-import uz from './messages/uz.json'
 
 export type Messages = Record<string, unknown>
 
-const messagesMap: Record<Locale, Messages> = { en, fr, ru, fa, ar, de, tr, uz }
+const messagesMap: Record<Locale, Messages> = { en }
 
 export function getMessages(locale: Locale): Messages {
   return messagesMap[locale] ?? messagesMap.en

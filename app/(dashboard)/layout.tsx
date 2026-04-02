@@ -2,7 +2,6 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { DarkModeToggle } from '@/components/dark-mode-toggle'
-import { LanguageSwitcher } from '@/components/language-switcher'
 import { getLocale } from '@/lib/i18n/getLocale'
 import { getMessages, createTranslator } from '@/lib/i18n/translate'
 
@@ -52,7 +51,6 @@ async function DashboardNav({ email }: { email: string }) {
           </form>
 
           <DarkModeToggle />
-          <LanguageSwitcher />
         </div>
       </div>
     </nav>
