@@ -6,6 +6,9 @@ import Link from 'next/link'
 import type { BlogPost } from '@/app/api/blogs/route'
 import { useLocale } from '@/components/locale-provider'
 import { BlogStoriesStrip } from '@/components/news-stories-strip'
+import { Pagination } from '@/components/pagination'
+
+const PAGE_SIZE = 20
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -294,6 +297,7 @@ export default function BlogsPage() {
   const [refreshing,     setRefreshing]     = useState(false)
   const [lastUpdated,    setLastUpdated]    = useState<Date | null>(null)
   const [noSources,      setNoSources]      = useState(false)
+  const [page,           setPage]           = useState(1)
 
   // Summary
   const [summary,        setSummary]        = useState('')
@@ -407,6 +411,12 @@ export default function BlogsPage() {
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current) }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterKey, tone, loading])
+
+  // Reset to page 1 when filters change
+  useEffect(() => { setPage(1) }, [timeFilter, enabledSources])
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+  const paginated  = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   function toggleSource(id: string) {
     setEnabledSources((prev) => {
@@ -553,9 +563,14 @@ export default function BlogsPage() {
         </div>
       ) : (
         <div className="space-y-3">
-          {filtered.map((post) => (
+          <p className="text-xs text-gray-400 dark:text-gray-500">
+            {filtered.length} articles
+            {totalPages > 1 && ` · Page ${page} of ${totalPages}`}
+          </p>
+          {paginated.map((post) => (
             <PostCard key={post.id} post={post} colour={sourceColour(post.sourceId, sourceIds)} />
           ))}
+          <Pagination page={page} totalPages={totalPages} onPage={(p) => { setPage(p); window.scrollTo({ top: 0, behavior: 'smooth' }) }} />
         </div>
       )}
     </div>

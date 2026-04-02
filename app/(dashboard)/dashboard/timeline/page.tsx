@@ -5,6 +5,9 @@ import { createClient } from '@/lib/supabase/client'
 import type { Article } from '@/lib/news/fetchArticles'
 import { useLocale } from '@/components/locale-provider'
 import { NewsStoriesStrip } from '@/components/news-stories-strip'
+import { Pagination } from '@/components/pagination'
+
+const PAGE_SIZE = 20
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -388,6 +391,7 @@ export default function TimelinePage() {
   const [loading, setLoading]             = useState(true)
   const [refreshing, setRefreshing]       = useState(false)
   const [lastUpdated, setLastUpdated]     = useState<Date | null>(null)
+  const [page, setPage]                   = useState(1)
 
   // Summary state
   const [summary, setSummary]               = useState('')
@@ -499,6 +503,12 @@ export default function TimelinePage() {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterKey, tone, loading])
+
+  // Reset to page 1 when filters change
+  useEffect(() => { setPage(1) }, [timeFilter, enabledTopics])
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+  const paginated  = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   // ── Topic toggle ──────────────────────────────────────────────────────────
   function toggleTopic(topic: string) {
@@ -639,14 +649,16 @@ export default function TimelinePage() {
         <div className="space-y-3">
           <p className="text-xs text-gray-400 dark:text-gray-500">
             {t('archive.articles', { count: filtered.length })}
+            {totalPages > 1 && ` · Page ${page} of ${totalPages}`}
           </p>
-          {filtered.map((article, i) => (
+          {paginated.map((article, i) => (
             <ArticleCard
               key={`${article.url}-${i}`}
               article={article}
               colour={topicColour(article.topic, topics)}
             />
           ))}
+          <Pagination page={page} totalPages={totalPages} onPage={(p) => { setPage(p); window.scrollTo({ top: 0, behavior: 'smooth' }) }} />
         </div>
       )}
     </div>
