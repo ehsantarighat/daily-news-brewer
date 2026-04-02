@@ -137,8 +137,9 @@ export default function ProfilePage() {
   // Delivery state
   const [timezone,     setTimezone]     = useState('UTC')
   const [deliveryHour, setDeliveryHour] = useState('07:00')
-  const [savingDelivery, setSavingDelivery] = useState(false)
-  const [deliverySaved,  setDeliverySaved]  = useState(false)
+  const [savingDelivery,  setSavingDelivery]  = useState(false)
+  const [deliverySaved,   setDeliverySaved]   = useState(false)
+  const [deliveryError,   setDeliveryError]   = useState<string | null>(null)
 
   // Billing state
   const [subStatus,    setSubStatus]    = useState<string | null>(null)
@@ -233,8 +234,17 @@ export default function ProfilePage() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
     setSavingDelivery(true)
-    await supabase.from('profiles').update({ timezone, delivery_time: deliveryHour }).eq('id', user.id)
+    setDeliveryError(null)
+    const { error } = await supabase
+      .from('profiles')
+      .update({ timezone, delivery_time: deliveryHour })
+      .eq('id', user.id)
     setSavingDelivery(false)
+    if (error) {
+      setDeliveryError(t('profile.saveFailed'))
+      console.error('Delivery save error:', error.message)
+      return
+    }
     setDeliverySaved(true)
     setTimeout(() => setDeliverySaved(false), 2500)
   }
@@ -394,6 +404,7 @@ export default function ProfilePage() {
           >
             {deliverySaved ? '✓ ' + t('profile.deliverySaved') : savingDelivery ? t('common.loading') : t('common.save')}
           </button>
+          {deliveryError && <p className="text-xs text-red-500">{deliveryError}</p>}
         </div>
       </Section>
 
