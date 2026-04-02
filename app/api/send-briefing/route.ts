@@ -19,10 +19,27 @@ async function getAdminSupabase() {
   )
 }
 
+function isAuthorized(request: NextRequest): boolean {
+  // Vercel cron: Authorization: Bearer <CRON_SECRET>
+  const authHeader = request.headers.get('authorization')
+  if (authHeader === `Bearer ${process.env.CRON_SECRET}`) return true
+  // Manual / legacy: x-cron-secret header
+  if (request.headers.get('x-cron-secret') === process.env.CRON_SECRET) return true
+  return false
+}
+
+// GET — called automatically by Vercel cron
+export async function GET(request: NextRequest) {
+  return runBriefing(request)
+}
+
+// POST — for manual triggers
 export async function POST(request: NextRequest) {
-  // Protect this route with a shared secret
-  const cronSecret = request.headers.get('x-cron-secret')
-  if (cronSecret !== process.env.CRON_SECRET) {
+  return runBriefing(request)
+}
+
+async function runBriefing(request: NextRequest) {
+  if (!isAuthorized(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -76,12 +93,22 @@ export async function POST(request: NextRequest) {
     if (!profile?.email) continue
 
     // Check if it's the user's delivery hour in their timezone
-    const userTimezone = profile.timezone ?? 'UTC'
-    const targetHour = parseInt((profile.delivery_time ?? '07:00').split(':')[0])
-    const currentHourInTZ = parseInt(
-      new Date().toLocaleString('en-US', { timeZone: userTimezone, hour: 'numeric', hour12: false })
-    )
-    if (currentHourInTZ !== targetHour) continue
+    // Only apply the check if the user has explicitly set a delivery_time
+    if (profile.delivery_time && profile.timezone) {
+      const targetHour = parseInt(profile.delivery_time.split(':')[0])
+      let currentHourInTZ: number
+      try {
+        const hourStr = new Date().toLocaleString('en-US', {
+          timeZone: profile.timezone,
+          hour: 'numeric',
+          hour12: false,
+        })
+        currentHourInTZ = parseInt(hourStr) % 24 // handle '24' returned for midnight
+      } catch {
+        currentHourInTZ = new Date().getUTCHours()
+      }
+      if (currentHourInTZ !== targetHour) continue
+    }
 
     // Create a pending briefing record
     const { data: briefingRecord } = await supabase
