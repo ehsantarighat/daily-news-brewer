@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { useLocale } from '@/components/locale-provider'
+import { OAuthButtons } from '@/components/oauth-buttons'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -42,14 +43,28 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="text-2xl font-bold text-indigo-600 mb-1">{t('common.appName')}</div>
           <CardTitle className="text-xl">{t('login.welcomeBack')}</CardTitle>
           <CardDescription>{t('login.subtitle')}</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-5">
+          {/* OAuth providers */}
+          <OAuthButtons />
+
+          {/* Divider */}
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-200 dark:border-gray-700" />
+            </div>
+            <div className="relative flex justify-center text-xs text-gray-400 dark:text-gray-500">
+              <span className="bg-white dark:bg-gray-900 px-3">or continue with email</span>
+            </div>
+          </div>
+
+          {/* Email / password form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
               <Label htmlFor="email">{t('login.email')}</Label>
