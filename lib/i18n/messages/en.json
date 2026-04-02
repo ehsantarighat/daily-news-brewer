@@ -3,7 +3,7 @@
     "appName": "Content Bite",
     "signIn": "Sign in",
     "signOut": "Sign out",
-    "startFreeTrial": "Start free trial",
+    "startFreeTrial": "Get started free",
     "loading": "Loading…",
     "refresh": "Refresh",
     "refreshing": "Refreshing…",
@@ -36,7 +36,7 @@
     "language": "Language"
   },
   "landing": {
-    "trialBadge": "7-day free trial · No credit card required",
+    "trialBadge": "Free · No credit card required",
     "heroTitle": "Your morning briefing,",
     "heroTitleHighlight": "powered by AI",
     "heroDesc": "Content Bite curates the most relevant news for you every morning — summarized by Claude AI, delivered to your inbox.",
@@ -52,8 +52,8 @@
     "monthly": "Monthly",
     "yearly": "Yearly · ~2 months free",
     "bestValue": "Best value",
-    "ctaTitle": "Start your free trial today",
-    "ctaSubtitle": "7 days free. Cancel anytime.",
+    "ctaTitle": "Start using Content Bite for free",
+    "ctaSubtitle": "No credit card required. Always free.",
     "createFreeAccount": "Create free account",
     "footer": "© {year} Content Bite"
   },
@@ -78,7 +78,7 @@
     "password": "Password",
     "passwordPlaceholder": "Min. 6 characters",
     "creating": "Creating account…",
-    "createBtn": "Create account — Start free trial",
+    "createBtn": "Create free account",
     "alreadyHaveAccount": "Already have an account?",
     "errorUnexpected": "An unexpected error occurred. Please try again."
   },

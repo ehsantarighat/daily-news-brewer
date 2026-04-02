@@ -20,7 +20,7 @@ export default async function LandingPage() {
               <Button variant="ghost" size="sm" className="text-gray-600 dark:text-gray-300">{t('common.signIn')}</Button>
             </Link>
             <Link href="/signup">
-              <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700">{t('common.startFreeTrial')}</Button>
+              <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700">{t('landing.getStartedFree')}</Button>
             </Link>
             <DarkModeToggle />
           </div>
@@ -29,10 +29,7 @@ export default async function LandingPage() {
 
       {/* Hero */}
       <div className="max-w-3xl mx-auto px-4 py-24 text-center">
-        <div className="inline-flex items-center rounded-full bg-indigo-50 dark:bg-indigo-950 border border-indigo-200 dark:border-indigo-800 px-3 py-1 text-xs font-medium text-indigo-700 dark:text-indigo-300 mb-6">
-          {t('landing.trialBadge')}
-        </div>
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-50 tracking-tight mb-4 leading-tight">
+<h1 className="text-4xl font-bold text-gray-900 dark:text-gray-50 tracking-tight mb-4 leading-tight">
           {t('landing.heroTitle')}<br />
           <span className="text-indigo-600">{t('landing.heroTitleHighlight')}</span>
         </h1>
