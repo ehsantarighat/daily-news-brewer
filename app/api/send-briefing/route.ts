@@ -116,7 +116,7 @@ async function runBriefing(request: NextRequest) {
         subject: result.subject,
         html: result.html,
         headers: {
-          'List-Unsubscribe': `<${process.env.NEXT_PUBLIC_APP_URL}/dashboard/billing>`,
+          'List-Unsubscribe': `<${process.env.NEXT_PUBLIC_APP_URL}/dashboard/profile>`,
         },
       })
 

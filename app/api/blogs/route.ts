@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import Parser from 'rss-parser'
 
+// Only add fields NOT already in Parser.Item (enclosure is already defined there)
 type CustomItem = {
-  'media:content'?: { $?: { url?: string }; url?: string } | { $?: { url?: string }; url?: string }[]
-  'media:thumbnail'?: { $?: { url?: string }; url?: string }
+  'media:content'?:   { $?: { url?: string } } | { $?: { url?: string } }[]
+  'media:thumbnail'?: { $?: { url?: string } }
   'content:encoded'?: string
-  enclosure?: { url?: string; type?: string }
 }
 
 const parser = new Parser<Record<string, unknown>, CustomItem>({
@@ -37,23 +37,20 @@ function extractImage(item: Parser.Item & CustomItem): string | null {
   const mc = item['media:content']
   if (mc) {
     const first = Array.isArray(mc) ? mc[0] : mc
-    const url = first?.$?.url ?? (first as { url?: string })?.url
+    const url = first?.$?.url
     if (url) return url
   }
 
   // 2. media:thumbnail
-  const mt = item['media:thumbnail']
-  if (mt) {
-    const url = mt.$?.url ?? (mt as { url?: string })?.url
-    if (url) return url
-  }
+  const url2 = item['media:thumbnail']?.$?.url
+  if (url2) return url2
 
-  // 3. enclosure (audio/video enclosures are common but images too)
+  // 3. enclosure (Parser.Item already has this with url: string)
   const enc = item.enclosure
   if (enc?.url && (!enc.type || enc.type.startsWith('image'))) return enc.url
 
   // 4. First <img> in content:encoded or content
-  const html = item['content:encoded'] ?? (item as Record<string, string>).content ?? ''
+  const html = (item['content:encoded'] ?? item.content ?? '') as string
   const match = html.match(/<img[^>]+src=["']([^"']+)["']/i)
   if (match?.[1]) return match[1]
 

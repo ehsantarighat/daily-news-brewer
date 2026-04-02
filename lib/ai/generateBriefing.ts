@@ -207,7 +207,7 @@ function buildEmailHtml(briefing: BriefingResult, date: string, name: string | n
       <p style="margin:0;font-size:12px;color:#9ca3af;text-align:center;">
         Content Bite · Personalized for you<br>
         <a href="${appUrl}/dashboard" style="color:#6b7280;">Manage preferences</a> ·
-        <a href="${appUrl}/dashboard/billing" style="color:#6b7280;">Billing</a>
+        <a href="${appUrl}/dashboard/profile" style="color:#6b7280;">Billing</a>
       </p>
     </div>
   </div>

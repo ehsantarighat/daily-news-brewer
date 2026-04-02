@@ -92,7 +92,7 @@ export function BriefingTemplate({
               {' · '}
               <Link href={`${appUrl}/dashboard`} style={{ color: '#6b7280' }}>Manage preferences</Link>
               {' · '}
-              <Link href={`${appUrl}/dashboard/billing`} style={{ color: '#6b7280' }}>Billing</Link>
+              <Link href={`${appUrl}/dashboard/profile`} style={{ color: '#6b7280' }}>Billing</Link>
             </Text>
           </Section>
         </Container>

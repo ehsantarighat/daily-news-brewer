@@ -46,7 +46,13 @@
       "Bash(echo \"$f OK\")",
       "Bash(echo \"$f FAIL\")",
       "Bash(done)",
-      "Bash(python3 -c \"import json; json.load\\(open\\(''lib/i18n/messages/de.json''\\)\\)\")"
+      "Bash(python3 -c \"import json; json.load\\(open\\(''lib/i18n/messages/de.json''\\)\\)\")",
+      "Bash(/usr/local/bin/npm run:*)",
+      "Bash(ls /usr/local/bin/node* /opt/homebrew/bin/node* ~/.nvm/versions/node/*/bin/node)",
+      "Bash(ls /opt/homebrew/bin/node /opt/homebrew/bin/npm ~/.nvm/versions/node/*/bin/npm)",
+      "Bash(/Users/ehsantarighat/pinokio/bin/miniconda/bin/npm run:*)",
+      "Bash(find '/Users/ehsantarighat/Documents/Daily News Brewer/node_modules/rss-parser' -name *.d.ts)",
+      "Bash(find '/Users/ehsantarighat/Documents/Daily News Brewer/node_modules/@types/rss-parser' -name *.d.ts)"
     ]
   }
 }
