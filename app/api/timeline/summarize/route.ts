@@ -10,13 +10,6 @@ function getAnthropicClient() {
 
 const LOCALE_LANGUAGE_NAMES: Record<Locale, string> = {
   en: 'English',
-  fr: 'French',
-  ru: 'Russian',
-  fa: 'Persian (Farsi)',
-  ar: 'Arabic',
-  de: 'German',
-  tr: 'Turkish',
-  uz: 'Uzbek',
 }
 
 export async function POST(request: NextRequest) {
