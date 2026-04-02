@@ -466,7 +466,7 @@ export function BlogStoriesStrip({ label }: { label?: string } = {}) {
           .slice(0, 25)
           .map((p): StoryItem => ({
             url: p.url, title: p.title, source: p.source,
-            imageUrl: undefined, publishedAt: p.publishedAt, colorKey: p.source,
+            imageUrl: p.imageUrl ?? undefined, publishedAt: p.publishedAt, colorKey: p.source,
           }))
 
         setItems(unique)
