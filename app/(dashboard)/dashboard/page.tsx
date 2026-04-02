@@ -8,6 +8,7 @@ import { getLocale } from '@/lib/i18n/getLocale'
 import { getMessages, createTranslator } from '@/lib/i18n/translate'
 import { TodaysBriefingCard } from '@/components/todays-briefing-card'
 import { NewsStoriesStrip } from '@/components/news-stories-strip'
+import { GreetingHeader } from '@/components/greeting-header'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -31,10 +32,7 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-6">
       {/* Greeting */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-50">{t('dashboard.greeting', { name: firstName })}</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{t('dashboard.subtitle')}</p>
-      </div>
+      <GreetingHeader name={firstName} subtitle={t('dashboard.subtitle')} />
 
       {/* Stories strip */}
       <NewsStoriesStrip />
