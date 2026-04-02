@@ -92,23 +92,8 @@ async function runBriefing(request: NextRequest) {
 
     if (!profile?.email) continue
 
-    // Check if it's the user's delivery hour in their timezone
-    // Only apply the check if the user has explicitly set a delivery_time
-    if (profile.delivery_time && profile.timezone) {
-      const targetHour = parseInt(profile.delivery_time.split(':')[0])
-      let currentHourInTZ: number
-      try {
-        const hourStr = new Date().toLocaleString('en-US', {
-          timeZone: profile.timezone,
-          hour: 'numeric',
-          hour12: false,
-        })
-        currentHourInTZ = parseInt(hourStr) % 24 // handle '24' returned for midnight
-      } catch {
-        currentHourInTZ = new Date().getUTCHours()
-      }
-      if (currentHourInTZ !== targetHour) continue
-    }
+    // Timezone-based hourly delivery requires a Pro Vercel plan (multiple cron runs/day).
+    // On the free plan the cron runs once daily at 7 AM UTC — send to all eligible users.
 
     // Create a pending briefing record
     const { data: briefingRecord } = await supabase
