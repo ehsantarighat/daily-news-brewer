@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "Daily News Brewer",
+    "appName": "Content Bite",
     "signIn": "Sign in",
     "signOut": "Sign out",
     "startFreeTrial": "Start free trial",
@@ -39,7 +39,7 @@
     "trialBadge": "7-day free trial · No credit card required",
     "heroTitle": "Your morning briefing,",
     "heroTitleHighlight": "powered by AI",
-    "heroDesc": "Daily News Brewer curates the most relevant news for you every morning — summarized by Claude AI, delivered to your inbox.",
+    "heroDesc": "Content Bite curates the most relevant news for you every morning — summarized by Claude AI, delivered to your inbox.",
     "getStartedFree": "Get started free",
     "feature1Title": "Choose your topics",
     "feature1Desc": "Select from 20 preset topics or add your own. AI, Startups, Markets, Geopolitics — you decide.",
@@ -55,7 +55,7 @@
     "ctaTitle": "Start your free trial today",
     "ctaSubtitle": "7 days free. Cancel anytime.",
     "createFreeAccount": "Create free account",
-    "footer": "© {year} Daily News Brewer"
+    "footer": "© {year} Content Bite"
   },
   "login": {
     "welcomeBack": "Welcome back",
@@ -95,7 +95,7 @@
   },
   "dashboard": {
     "greeting": "Good morning, {name}!",
-    "subtitle": "Here's your Daily News Brewer dashboard",
+    "subtitle": "Here's your Content Bite dashboard",
     "noPlan": "No plan",
     "statusTrialing": "Free Trial",
     "statusActive": "Active",

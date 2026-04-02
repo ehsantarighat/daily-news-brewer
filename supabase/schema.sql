@@ -1,4 +1,4 @@
--- Daily News Brewer — Supabase Schema
+-- Content Bite — Supabase Schema
 -- Run this in the Supabase SQL Editor to set up all tables and RLS policies.
 
 -- ============================================================

@@ -36,7 +36,7 @@ export function BriefingTemplate({
           {/* Header */}
           <Section style={{ backgroundColor: '#4f46e5', padding: '24px 32px' }}>
             <Text style={{ color: '#ffffff', fontSize: '20px', fontWeight: '700', margin: 0, letterSpacing: '-0.025em' }}>
-              Daily News Brewer
+              Content Bite
             </Text>
             <Text style={{ color: '#c7d2fe', fontSize: '13px', margin: '4px 0 0 0' }}>
               {date}
@@ -88,7 +88,7 @@ export function BriefingTemplate({
           <Hr style={{ borderColor: '#e5e7eb', margin: 0 }} />
           <Section style={{ backgroundColor: '#f9fafb', padding: '20px 32px' }}>
             <Text style={{ fontSize: '12px', color: '#9ca3af', textAlign: 'center', margin: 0 }}>
-              Daily News Brewer · Personalized for you
+              Content Bite · Personalized for you
               {' · '}
               <Link href={`${appUrl}/dashboard`} style={{ color: '#6b7280' }}>Manage preferences</Link>
               {' · '}

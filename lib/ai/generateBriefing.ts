@@ -181,7 +181,7 @@ function buildEmailHtml(briefing: BriefingResult, date: string, name: string | n
   <div style="max-width:600px;margin:0 auto;background:#ffffff;">
     <!-- Header -->
     <div style="background:#4f46e5;padding:24px 32px;">
-      <div style="font-size:20px;font-weight:700;color:#ffffff;letter-spacing:-0.025em;">Daily News Brewer</div>
+      <div style="font-size:20px;font-weight:700;color:#ffffff;letter-spacing:-0.025em;">Content Bite</div>
       <div style="font-size:13px;color:#c7d2fe;margin-top:4px;">${date}</div>
     </div>
 
@@ -205,7 +205,7 @@ function buildEmailHtml(briefing: BriefingResult, date: string, name: string | n
     <!-- Footer -->
     <div style="background:#f9fafb;padding:20px 32px;border-top:1px solid #e5e7eb;">
       <p style="margin:0;font-size:12px;color:#9ca3af;text-align:center;">
-        Daily News Brewer · Personalized for you<br>
+        Content Bite · Personalized for you<br>
         <a href="${appUrl}/dashboard" style="color:#6b7280;">Manage preferences</a> ·
         <a href="${appUrl}/dashboard/billing" style="color:#6b7280;">Billing</a>
       </p>

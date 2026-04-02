@@ -111,7 +111,7 @@ async function runBriefing(request: NextRequest) {
 
       // Send email via Resend
       const { error: sendError } = await resend.emails.send({
-        from: 'Daily News Brewer <briefing@dailyblend.news>',
+        from: 'Content Bite <briefing@dailyblend.news>',
         to: profile.email,
         subject: result.subject,
         html: result.html,

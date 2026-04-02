@@ -93,7 +93,7 @@ export default async function BillingPage() {
     <div className="space-y-8 max-w-2xl">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Billing</h1>
-        <p className="text-sm text-gray-500 mt-1">Manage your Daily News Brewer subscription.</p>
+        <p className="text-sm text-gray-500 mt-1">Manage your Content Bite subscription.</p>
       </div>
 
       {/* Current status */}

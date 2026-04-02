@@ -15,7 +15,7 @@ const roboto = Roboto({
 })
 
 export const metadata: Metadata = {
-  title: 'Daily News Brewer — Your AI-curated morning briefing',
+  title: 'Content Bite — Your AI-curated morning briefing',
   description: 'Get a personalized AI-curated news briefing delivered to your inbox every morning.',
 }
 
