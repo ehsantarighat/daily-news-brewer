@@ -4,11 +4,13 @@ import { createClient } from '@/lib/supabase/server'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import type { Subscription, Topic, Briefing } from '@/lib/types'
+import type { Subscription, Topic } from '@/lib/types'
 import { getLocale } from '@/lib/i18n/getLocale'
 import { getMessages, createTranslator } from '@/lib/i18n/translate'
+import { TodaysBriefingCard } from '@/components/todays-briefing-card'
 
 type Translator = (key: string, params?: Record<string, string | number>) => string
+
 
 function SubscriptionBadge({ sub, t }: { sub: Subscription | null; t: Translator }) {
   if (!sub) return <Badge variant="secondary">{t('dashboard.noPlan')}</Badge>
@@ -67,59 +69,6 @@ function TrialBanner({ sub, t }: { sub: Subscription | null; t: Translator }) {
   )
 }
 
-function formatDeliveryLabel(deliveryTime: string | null, timezone: string | null): string {
-  const time = deliveryTime ?? '07:00'
-  const tz = timezone ?? 'UTC'
-  const h = parseInt(time.split(':')[0])
-  const ampm = h >= 12 ? 'PM' : 'AM'
-  const hour12 = h === 0 ? 12 : h > 12 ? h - 12 : h
-  const city = tz === 'UTC' ? 'UTC' : (tz.split('/').pop()?.replace(/_/g, ' ') ?? tz)
-  return `${hour12}:00 ${ampm} (${city})`
-}
-
-function TodaysBriefingCard({ briefing, deliveryTime, timezone, t }: {
-  briefing: Briefing | null
-  deliveryTime: string | null
-  timezone: string | null
-  t: Translator
-}) {
-  const today = new Date().toDateString()
-  const isToday = briefing && briefing.delivered_at
-    ? new Date(briefing.delivered_at).toDateString() === today
-    : false
-
-  if (!briefing || !isToday) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">{t('dashboard.todaysBriefing')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-gray-500">
-            {t('dashboard.nextBriefing', { time: formatDeliveryLabel(deliveryTime, timezone) })}
-          </p>
-        </CardContent>
-      </Card>
-    )
-  }
-
-  return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-base">{t('dashboard.todaysBriefing')}</CardTitle>
-          <span className="text-xs font-medium text-green-600 bg-green-50 border border-green-200 rounded-full px-2 py-0.5">
-            {t('dashboard.delivered')}
-          </span>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-2">
-        <p className="text-sm font-medium text-gray-800">{briefing.subject}</p>
-        <p className="text-xs text-gray-500">{t('archive.articles', { count: briefing.articles_count ?? 0 })} · {new Date(briefing.delivered_at!).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-      </CardContent>
-    </Card>
-  )
-}
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -131,24 +80,15 @@ export default async function DashboardPage() {
   const messages = getMessages(locale)
   const t = createTranslator(messages)
 
-  const [profileResult, subResult, topicsResult, briefingResult] = await Promise.all([
-    supabase.from('profiles').select('*').eq('id', user.id).single(),
+  const [profileResult, subResult, topicsResult] = await Promise.all([
+    supabase.from('profiles').select('full_name').eq('id', user.id).single(),
     supabase.from('subscriptions').select('*').eq('user_id', user.id).single(),
     supabase.from('topics').select('*').eq('user_id', user.id).eq('active', true).order('created_at'),
-    supabase
-      .from('briefings')
-      .select('*')
-      .eq('user_id', user.id)
-      .eq('status', 'sent')
-      .order('delivered_at', { ascending: false })
-      .limit(1)
-      .single(),
   ])
 
   const profile = profileResult.data
   const subscription = subResult.data as Subscription | null
   const topics = (topicsResult.data ?? []) as Topic[]
-  const latestBriefing = briefingResult.data as Briefing | null
 
   const firstName = profile?.full_name?.split(' ')[0] ?? 'there'
 
@@ -166,13 +106,8 @@ export default async function DashboardPage() {
       {/* Trial banner */}
       <TrialBanner sub={subscription} t={t} />
 
-      {/* Today's briefing */}
-      <TodaysBriefingCard
-        briefing={latestBriefing}
-        deliveryTime={profile?.delivery_time ?? null}
-        timezone={profile?.timezone ?? null}
-        t={t}
-      />
+      {/* Today's briefing — client component fetches its own fresh data */}
+      <TodaysBriefingCard />
 
       {/* Topics */}
       <Card>
