@@ -107,7 +107,7 @@
     "daysLeftPlural": "{count} days left in your free trial.",
     "viewPlans": "View plans",
     "todaysBriefing": "Today's Briefing",
-    "nextBriefing": "Your next briefing arrives tomorrow at 7:00 AM UTC.",
+    "nextBriefing": "Your next briefing arrives tomorrow at {time}.",
     "delivered": "Delivered ✓",
     "yourTopics": "Your Topics ({count}/10)",
     "manageTopics": "Manage Topics",

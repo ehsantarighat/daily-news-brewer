@@ -107,7 +107,7 @@
     "daysLeftPlural": "Осталось {count} дней пробного периода.",
     "viewPlans": "Просмотреть планы",
     "todaysBriefing": "Сегодняшний брифинг",
-    "nextBriefing": "Следующий брифинг придёт завтра в 7:00 UTC.",
+    "nextBriefing": "Следующий брифинг придёт завтра в {time}.",
     "delivered": "Доставлено ✓",
     "yourTopics": "Ваши темы ({count}/10)",
     "manageTopics": "Управление темами",

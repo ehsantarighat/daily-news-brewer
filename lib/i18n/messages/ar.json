@@ -107,7 +107,7 @@
     "daysLeftPlural": "تبقى {count} أيام في تجربتك المجانية.",
     "viewPlans": "عرض الخطط",
     "todaysBriefing": "نشرة اليوم",
-    "nextBriefing": "ستصل نشرتك التالية غداً الساعة ٧:٠٠ صباحاً UTC.",
+    "nextBriefing": "ستصل نشرتك التالية غداً الساعة {time}.",
     "delivered": "مُسلَّمة ✓",
     "yourTopics": "مواضيعك ({count}/١٠)",
     "manageTopics": "إدارة المواضيع",

@@ -107,7 +107,7 @@
     "daysLeftPlural": "Bepul sinovingizda {count} kun qoldi.",
     "viewPlans": "Rejalarni ko'rish",
     "todaysBriefing": "Bugungi brifing",
-    "nextBriefing": "Keyingi brifing ertaga soat 7:00 UTC da keladi.",
+    "nextBriefing": "Keyingi brifing ertaga soat {time} da keladi.",
     "delivered": "Yetkazildi ✓",
     "yourTopics": "Mavzularingiz ({count}/10)",
     "manageTopics": "Mavzularni boshqarish",

@@ -107,7 +107,7 @@
     "daysLeftPlural": "Ücretsiz denemenizde {count} gün kaldı.",
     "viewPlans": "Planları görüntüle",
     "todaysBriefing": "Bugünün Brifingи",
-    "nextBriefing": "Bir sonraki brifing yarın saat 7:00 UTC'de gelecek.",
+    "nextBriefing": "Bir sonraki brifing yarın saat {time} gelecek.",
     "delivered": "Teslim edildi ✓",
     "yourTopics": "Konularınız ({count}/10)",
     "manageTopics": "Konuları yönet",

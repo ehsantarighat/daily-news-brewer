@@ -67,7 +67,22 @@ function TrialBanner({ sub, t }: { sub: Subscription | null; t: Translator }) {
   )
 }
 
-function TodaysBriefingCard({ briefing, t }: { briefing: Briefing | null; t: Translator }) {
+function formatDeliveryLabel(deliveryTime: string | null, timezone: string | null): string {
+  const time = deliveryTime ?? '07:00'
+  const tz = timezone ?? 'UTC'
+  const h = parseInt(time.split(':')[0])
+  const ampm = h >= 12 ? 'PM' : 'AM'
+  const hour12 = h === 0 ? 12 : h > 12 ? h - 12 : h
+  const city = tz === 'UTC' ? 'UTC' : (tz.split('/').pop()?.replace(/_/g, ' ') ?? tz)
+  return `${hour12}:00 ${ampm} (${city})`
+}
+
+function TodaysBriefingCard({ briefing, deliveryTime, timezone, t }: {
+  briefing: Briefing | null
+  deliveryTime: string | null
+  timezone: string | null
+  t: Translator
+}) {
   const today = new Date().toDateString()
   const isToday = briefing && briefing.delivered_at
     ? new Date(briefing.delivered_at).toDateString() === today
@@ -80,7 +95,9 @@ function TodaysBriefingCard({ briefing, t }: { briefing: Briefing | null; t: Tra
           <CardTitle className="text-base">{t('dashboard.todaysBriefing')}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-gray-500">{t('dashboard.nextBriefing')}</p>
+          <p className="text-sm text-gray-500">
+            {t('dashboard.nextBriefing', { time: formatDeliveryLabel(deliveryTime, timezone) })}
+          </p>
         </CardContent>
       </Card>
     )
@@ -150,7 +167,12 @@ export default async function DashboardPage() {
       <TrialBanner sub={subscription} t={t} />
 
       {/* Today's briefing */}
-      <TodaysBriefingCard briefing={latestBriefing} t={t} />
+      <TodaysBriefingCard
+        briefing={latestBriefing}
+        deliveryTime={profile?.delivery_time ?? null}
+        timezone={profile?.timezone ?? null}
+        t={t}
+      />
 
       {/* Topics */}
       <Card>

@@ -107,7 +107,7 @@
     "daysLeftPlural": "{count} Tage verbleibend in deiner kostenlosen Testversion.",
     "viewPlans": "Pläne anzeigen",
     "todaysBriefing": "Heutiges Briefing",
-    "nextBriefing": "Dein nächstes Briefing kommt morgen um 7:00 Uhr UTC.",
+    "nextBriefing": "Dein nächstes Briefing kommt morgen um {time}.",
     "delivered": "Geliefert ✓",
     "yourTopics": "Deine Themen ({count}/10)",
     "manageTopics": "Themen verwalten",

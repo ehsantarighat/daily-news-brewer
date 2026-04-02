@@ -107,7 +107,7 @@
     "daysLeftPlural": "{count} روز از آزمایش رایگان شما باقی مانده است.",
     "viewPlans": "مشاهده طرح‌ها",
     "todaysBriefing": "خلاصه اخبار امروز",
-    "nextBriefing": "خلاصه اخبار بعدی شما فردا ساعت ۷:۰۰ UTC می‌رسد.",
+    "nextBriefing": "خلاصه اخبار بعدی شما فردا ساعت {time} می‌رسد.",
     "delivered": "تحویل داده شد ✓",
     "yourTopics": "موضوعات شما ({count}/۱۰)",
     "manageTopics": "مدیریت موضوعات",

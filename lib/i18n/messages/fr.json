@@ -107,7 +107,7 @@
     "daysLeftPlural": "{count} jours restants dans votre essai gratuit.",
     "viewPlans": "Voir les offres",
     "todaysBriefing": "Briefing du jour",
-    "nextBriefing": "Votre prochain briefing arrivera demain à 7h00 UTC.",
+    "nextBriefing": "Votre prochain briefing arrivera demain à {time}.",
     "delivered": "Livré ✓",
     "yourTopics": "Vos sujets ({count}/10)",
     "manageTopics": "Gérer les sujets",
