@@ -2,6 +2,7 @@ export interface Article {
   title: string
   description: string
   url: string
+  urlToImage?: string
   source: string
   publishedAt: string
   topic: string
@@ -54,6 +55,7 @@ export async function fetchArticlesForTopic(topic: string): Promise<Article[]> {
     title: stripHtml((a.title as string) ?? ''),
     description: stripHtml(((a.description ?? a.content) as string) ?? ''),
     url: (a.url as string) ?? '',
+    urlToImage: (a.urlToImage as string) || undefined,
     source: (a.source as { name?: string })?.name ?? 'Unknown',
     publishedAt: a.publishedAt ?? '',
     topic,

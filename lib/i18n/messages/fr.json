@@ -113,6 +113,7 @@
     "manageTopics": "Gérer les sujets",
     "noTopicsYet": "Aucun sujet pour l'instant. Ajoutez-en pour commencer à recevoir des briefings.",
     "addTopics": "Ajouter des sujets",
+    "latestStories": "Dernières actualités",
     "quickLinks": {
       "timeline": "Fil d'actualité",
       "timelineDesc": "Flux d'actualités en direct par sujet",

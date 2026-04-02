@@ -8,6 +8,7 @@ import type { Subscription, Topic } from '@/lib/types'
 import { getLocale } from '@/lib/i18n/getLocale'
 import { getMessages, createTranslator } from '@/lib/i18n/translate'
 import { TodaysBriefingCard } from '@/components/todays-briefing-card'
+import { NewsStoriesStrip } from '@/components/news-stories-strip'
 
 type Translator = (key: string, params?: Record<string, string | number>) => string
 
@@ -105,6 +106,9 @@ export default async function DashboardPage() {
 
       {/* Trial banner */}
       <TrialBanner sub={subscription} t={t} />
+
+      {/* Stories strip */}
+      <NewsStoriesStrip />
 
       {/* Today's briefing — client component fetches its own fresh data */}
       <TodaysBriefingCard />

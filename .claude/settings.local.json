@@ -30,7 +30,23 @@
       "Bash(npm run:*)",
       "Bash(node node_modules/next/dist/bin/next build)",
       "mcp__Claude_Preview__preview_start",
-      "Bash(echo $PATH)"
+      "Bash(echo $PATH)",
+      "Bash(gh auth:*)",
+      "Bash(ssh-keygen -l -f ~/.ssh/id_rsa.pub)",
+      "Bash(ssh-keygen -l -f ~/.ssh/id_ed25519.pub)",
+      "Bash(ssh-keygen -t ed25519 -C \"ehsantarighat@github\" -f ~/.ssh/id_ed25519 -N \"\")",
+      "Bash(grep '\"\"openai\"\"' package.json)",
+      "Bash(/Users/ehsantarighat/pinokio/bin/miniconda/bin/node node_modules/npm/bin/npm-cli.js install openai --save)",
+      "Bash(/Users/ehsantarighat/pinokio/bin/miniconda/bin/node /Users/ehsantarighat/pinokio/bin/miniconda/bin/npm install openai --save)",
+      "Bash(/Users/ehsantarighat/pinokio/bin/miniconda/bin/npm install:*)",
+      "Bash(/Users/ehsantarighat/Documents/Daily News Brewer/node_modules/.bin/tsc --noEmit)",
+      "Bash(ls ~/.nvm/versions/node/*/bin/node)",
+      "Bash(for f:*)",
+      "Bash(do python3:*)",
+      "Bash(echo \"$f OK\")",
+      "Bash(echo \"$f FAIL\")",
+      "Bash(done)",
+      "Bash(python3 -c \"import json; json.load\\(open\\(''lib/i18n/messages/de.json''\\)\\)\")"
     ]
   }
 }
