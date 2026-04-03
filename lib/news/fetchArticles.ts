@@ -22,42 +22,41 @@ export async function fetchArticlesForTopic(topic: string): Promise<Article[]> {
     return cached.articles
   }
 
-  const apiKey = process.env.NEWS_API_KEY
+  const apiKey = process.env.GNEWS_API_KEY
   if (!apiKey) {
-    throw new Error('NEWS_API_KEY is not set')
+    throw new Error('GNEWS_API_KEY is not set')
   }
 
-  // Fetch up to 10 recent articles per topic (sorted by publishedAt)
   const params = new URLSearchParams({
     q: topic,
-    pageSize: '10',
-    sortBy: 'publishedAt',
-    language: 'en',
-    apiKey,
+    max: '10',
+    sortby: 'publishedAt',
+    lang: 'en',
+    token: apiKey,
   })
 
   const response = await fetch(
-    `https://newsapi.org/v2/everything?${params.toString()}`,
+    `https://gnews.io/api/v4/search?${params.toString()}`,
     { next: { revalidate: 0 } }
   )
 
   if (!response.ok) {
-    throw new Error(`NewsAPI error for topic "${topic}": ${response.statusText}`)
+    throw new Error(`GNews error for topic "${topic}": ${response.statusText}`)
   }
 
   const data = await response.json()
 
-  if (data.status !== 'ok') {
-    throw new Error(`NewsAPI returned status: ${data.status} — ${data.message}`)
+  if (!data.articles) {
+    throw new Error(`GNews returned no articles: ${JSON.stringify(data)}`)
   }
 
   const articles: Article[] = (data.articles ?? []).map((a: Record<string, unknown>) => ({
     title: stripHtml((a.title as string) ?? ''),
     description: stripHtml(((a.description ?? a.content) as string) ?? ''),
     url: (a.url as string) ?? '',
-    urlToImage: (a.urlToImage as string) || undefined,
+    urlToImage: (a.image as string) || undefined,
     source: (a.source as { name?: string })?.name ?? 'Unknown',
-    publishedAt: a.publishedAt ?? '',
+    publishedAt: (a.publishedAt as string) ?? '',
     topic,
   }))
 
