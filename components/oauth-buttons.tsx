@@ -45,21 +45,33 @@ const PROVIDERS: OAuthProvider[] = [
 
 export function OAuthButtons() {
   const [loadingProvider, setLoadingProvider] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   async function signInWith(provider: Provider) {
     setLoadingProvider(provider)
+    setError(null)
     const supabase = createClient()
     const redirectTo = `${window.location.origin}/auth/callback`
 
-    await supabase.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: { redirectTo },
     })
-    // Page will redirect — no need to reset state
+
+    if (error) {
+      setError(error.message)
+      setLoadingProvider(null)
+    }
+    // On success the page redirects — no need to reset state
   }
 
   return (
     <div className="space-y-2.5">
+      {error && (
+        <div className="rounded-lg bg-red-50 border border-red-200 p-3 text-xs text-red-600">
+          {error}
+        </div>
+      )}
       {PROVIDERS.map((p) => (
         <button
           key={p.id}
