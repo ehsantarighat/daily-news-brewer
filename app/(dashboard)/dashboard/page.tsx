@@ -54,8 +54,8 @@ export default async function DashboardPage() {
         <Link href="/dashboard/blogs">
           <Card className="hover:border-indigo-200 hover:bg-indigo-50/30 dark:hover:bg-indigo-950/20 transition-colors cursor-pointer h-full">
             <CardContent className="p-4">
-              <div className="text-sm font-semibold text-gray-800 dark:text-gray-200">{t('dashboard.quickLinks.blogs') ?? 'Blog Feeds'}</div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{t('dashboard.quickLinks.blogsDesc') ?? 'Latest posts from your blogs'}</div>
+              <div className="text-sm font-semibold text-gray-800 dark:text-gray-200">Online Magazines</div>
+              <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Latest posts from your followed blogs</div>
             </CardContent>
           </Card>
         </Link>
