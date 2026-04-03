@@ -28,8 +28,9 @@ function stripHtml(html: string): string {
   return html.replace(/<[^>]*>/g, '').trim()
 }
 
-export async function fetchArticlesForTopic(topic: string): Promise<Article[]> {
-  const cached = articleCache.get(topic)
+export async function fetchArticlesForTopic(topic: string, country = ''): Promise<Article[]> {
+  const cacheKey = country ? `${topic}:${country}` : topic
+  const cached = articleCache.get(cacheKey)
   if (cached && Date.now() - cached.fetchedAt < CACHE_TTL_MS) {
     return cached.articles
   }
@@ -46,9 +47,10 @@ export async function fetchArticlesForTopic(topic: string): Promise<Article[]> {
     language: 'en',
     size: '10',
     ...(category
-      ? { category, q: topic }   // use category + keyword for mapped topics
-      : { q: topic }              // keyword only for unmapped topics
+      ? { category, q: topic }
+      : { q: topic }
     ),
+    ...(country ? { country } : {}),
   })
 
   const response = await fetch(
@@ -82,16 +84,16 @@ export async function fetchArticlesForTopic(topic: string): Promise<Article[]> {
     }
   })
 
-  articleCache.set(topic, { articles, fetchedAt: Date.now() })
+  articleCache.set(cacheKey, { articles, fetchedAt: Date.now() })
   return articles
 }
 
-export async function fetchArticlesForTopics(topics: string[]): Promise<Article[]> {
+export async function fetchArticlesForTopics(topics: string[], country = ''): Promise<Article[]> {
   const results: Article[] = []
 
   for (const topic of topics) {
     try {
-      const articles = await fetchArticlesForTopic(topic)
+      const articles = await fetchArticlesForTopic(topic, country)
       results.push(...articles)
     } catch (error) {
       // Log but continue — a single failing topic shouldn't block the whole briefing

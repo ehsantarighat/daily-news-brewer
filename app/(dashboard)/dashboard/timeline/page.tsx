@@ -37,6 +37,37 @@ const TIME_FILTER_DISPLAY: Record<TimeFilter, string> = {
 const TONE_VALUES: Tone[] = ['professional', 'casual', 'energetic', 'concise']
 const TIME_FILTER_VALUES: TimeFilter[] = ['1h', '6h', '12h', '24h', '3d', '7d', 'all']
 
+// ─── Countries ────────────────────────────────────────────────────────────────
+
+const COUNTRIES = [
+  { code: '',   label: '🌍 All Countries' },
+  { code: 'us', label: '🇺🇸 United States' },
+  { code: 'gb', label: '🇬🇧 United Kingdom' },
+  { code: 'ca', label: '🇨🇦 Canada' },
+  { code: 'au', label: '🇦🇺 Australia' },
+  { code: 'de', label: '🇩🇪 Germany' },
+  { code: 'fr', label: '🇫🇷 France' },
+  { code: 'in', label: '🇮🇳 India' },
+  { code: 'cn', label: '🇨🇳 China' },
+  { code: 'jp', label: '🇯🇵 Japan' },
+  { code: 'br', label: '🇧🇷 Brazil' },
+  { code: 'ru', label: '🇷🇺 Russia' },
+  { code: 'ae', label: '🇦🇪 UAE' },
+  { code: 'sa', label: '🇸🇦 Saudi Arabia' },
+  { code: 'tr', label: '🇹🇷 Turkey' },
+  { code: 'il', label: '🇮🇱 Israel' },
+  { code: 'za', label: '🇿🇦 South Africa' },
+  { code: 'ng', label: '🇳🇬 Nigeria' },
+  { code: 'mx', label: '🇲🇽 Mexico' },
+  { code: 'ar', label: '🇦🇷 Argentina' },
+  { code: 'sg', label: '🇸🇬 Singapore' },
+  { code: 'kr', label: '🇰🇷 South Korea' },
+  { code: 'nl', label: '🇳🇱 Netherlands' },
+  { code: 'se', label: '🇸🇪 Sweden' },
+  { code: 'ch', label: '🇨🇭 Switzerland' },
+  { code: 'uz', label: '🇺🇿 Uzbekistan' },
+]
+
 // ─── Colours ──────────────────────────────────────────────────────────────────
 
 const TOPIC_COLOURS = [
@@ -388,6 +419,7 @@ export default function TimelinePage() {
   const [enabledTopics, setEnabledTopics] = useState<Set<string>>(new Set())
   const [articles, setArticles]           = useState<Article[]>([])
   const [timeFilter, setTimeFilter]       = useState<TimeFilter>('7d')
+  const [country, setCountry]             = useState<string>('')
   const [loading, setLoading]             = useState(true)
   const [refreshing, setRefreshing]       = useState(false)
   const [lastUpdated, setLastUpdated]     = useState<Date | null>(null)
@@ -425,7 +457,9 @@ export default function TimelinePage() {
     if (topics.length === 0) { setLoading(false); return }
     if (showRefreshing) setRefreshing(true)
     try {
-      const res = await fetch(`/api/timeline?topics=${encodeURIComponent(topics.join(','))}`)
+      const params = new URLSearchParams({ topics: topics.join(',') })
+      if (country) params.set('country', country)
+      const res = await fetch(`/api/timeline?${params.toString()}`)
       const { articles: fetched } = await res.json()
       setArticles(fetched ?? [])
       setLastUpdated(new Date())
@@ -433,13 +467,13 @@ export default function TimelinePage() {
       setLoading(false)
       setRefreshing(false)
     }
-  }, [topics])
+  }, [topics, country])
 
   useEffect(() => {
     if (topics.length > 0) fetchArticles()
     else if (topics.length === 0) setLoading(false)
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [topics])
+  }, [topics, country])
 
   // ── Filtered articles ─────────────────────────────────────────────────────
   const hoursLimit = TIME_FILTER_HOURS[timeFilter]
@@ -505,7 +539,7 @@ export default function TimelinePage() {
   }, [filterKey, tone, loading])
 
   // Reset to page 1 when filters change
-  useEffect(() => { setPage(1) }, [timeFilter, enabledTopics])
+  useEffect(() => { setPage(1) }, [timeFilter, enabledTopics, country])
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
   const paginated  = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
@@ -588,6 +622,22 @@ export default function TimelinePage() {
             {t(`timeline.timeFilters.${f}`)}
           </button>
         ))}
+      </div>
+
+      {/* Country filter */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mr-1">
+          COUNTRY
+        </span>
+        <select
+          value={country}
+          onChange={(e) => { setCountry(e.target.value); setArticles([]); setLoading(true) }}
+          className="px-3 py-1.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-none focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+        >
+          {COUNTRIES.map(({ code, label }) => (
+            <option key={code} value={code}>{label}</option>
+          ))}
+        </select>
       </div>
 
       {/* Topic toggles */}

@@ -9,6 +9,7 @@ export async function GET(request: NextRequest) {
 
   const { searchParams } = new URL(request.url)
   const topicsParam = searchParams.get('topics') ?? ''
+  const country = searchParams.get('country') ?? ''
   const topics = topicsParam.split(',').map((t) => t.trim()).filter(Boolean)
 
   if (topics.length === 0) return NextResponse.json({ articles: [] })
@@ -16,7 +17,7 @@ export async function GET(request: NextRequest) {
   const allArticles = []
   for (const topic of topics) {
     try {
-      const articles = await fetchArticlesForTopic(topic)
+      const articles = await fetchArticlesForTopic(topic, country)
       allArticles.push(...articles)
     } catch (e) {
       console.error(`Timeline: failed to fetch "${topic}":`, e)
