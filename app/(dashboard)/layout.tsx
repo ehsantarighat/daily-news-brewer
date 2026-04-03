@@ -25,6 +25,7 @@ async function DashboardNav({ email }: { email: string }) {
           <Link href="/dashboard/topics"   className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">{t('nav.topics')}</Link>
           <Link href="/dashboard/timeline" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">{t('nav.timeline')}</Link>
           <Link href="/dashboard/blogs"    className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">{t('nav.blogs')}</Link>
+          <Link href="/dashboard/markets"  className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">Markets</Link>
           <Link href="/dashboard/profile"  className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">{t('nav.profile')}</Link>
           <a
             href="https://ko-fi.com/ehsantarighat"
