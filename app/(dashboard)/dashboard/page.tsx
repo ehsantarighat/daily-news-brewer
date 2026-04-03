@@ -1,21 +1,16 @@
 import { redirect } from 'next/navigation'
-import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { Card, CardContent } from '@/components/ui/card'
-import { getLocale } from '@/lib/i18n/getLocale'
-import { getMessages, createTranslator } from '@/lib/i18n/translate'
-import { NewsStoriesStrip } from '@/components/news-stories-strip'
 import { GreetingHeader } from '@/components/greeting-header'
+import { DashboardMarketStrip } from '@/components/dashboard-market-strip'
+import { DashboardTopStories } from '@/components/dashboard-top-stories'
+import { DashboardAiDigest } from '@/components/dashboard-ai-digest'
+import { DashboardMagazines } from '@/components/dashboard-magazines'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) redirect('/login')
-
-  const locale = await getLocale()
-  const messages = getMessages(locale)
-  const t = createTranslator(messages)
 
   const { data: profile } = await supabase
     .from('profiles')
@@ -25,41 +20,29 @@ export default async function DashboardPage() {
 
   const firstName = profile?.full_name?.split(' ')[0] ?? 'there'
 
+  const { data: topicsData } = await supabase
+    .from('user_topics')
+    .select('topic')
+    .eq('user_id', user.id)
+
+  const topics = topicsData?.map(r => r.topic) ?? []
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-7">
       {/* Greeting */}
-      <GreetingHeader name={firstName} subtitle={t('dashboard.subtitle')} />
+      <GreetingHeader name={firstName} subtitle="Here's what's happening today." />
 
-      {/* Stories strip */}
-      <NewsStoriesStrip />
+      {/* Market Snapshot */}
+      <DashboardMarketStrip />
 
-      {/* Quick links */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <Link href="/dashboard/timeline">
-          <Card className="hover:border-indigo-200 hover:bg-indigo-50/30 dark:hover:bg-indigo-950/20 transition-colors cursor-pointer h-full">
-            <CardContent className="p-4">
-              <div className="text-sm font-semibold text-gray-800 dark:text-gray-200">{t('dashboard.quickLinks.timeline')}</div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{t('dashboard.quickLinks.timelineDesc')}</div>
-            </CardContent>
-          </Card>
-        </Link>
-        <Link href="/dashboard/markets">
-          <Card className="hover:border-indigo-200 hover:bg-indigo-50/30 dark:hover:bg-indigo-950/20 transition-colors cursor-pointer h-full">
-            <CardContent className="p-4">
-              <div className="text-sm font-semibold text-gray-800 dark:text-gray-200">Markets</div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Live prices &amp; financial news</div>
-            </CardContent>
-          </Card>
-        </Link>
-        <Link href="/dashboard/blogs">
-          <Card className="hover:border-indigo-200 hover:bg-indigo-50/30 dark:hover:bg-indigo-950/20 transition-colors cursor-pointer h-full">
-            <CardContent className="p-4">
-              <div className="text-sm font-semibold text-gray-800 dark:text-gray-200">Online Magazines</div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Latest posts from your followed blogs</div>
-            </CardContent>
-          </Card>
-        </Link>
-      </div>
+      {/* Top Stories + Trending Topics */}
+      <DashboardTopStories topics={topics} />
+
+      {/* AI Daily Digest */}
+      {topics.length > 0 && <DashboardAiDigest topics={topics} />}
+
+      {/* Latest from Magazines */}
+      <DashboardMagazines />
     </div>
   )
 }
