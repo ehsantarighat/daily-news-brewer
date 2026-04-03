@@ -21,11 +21,13 @@ export default async function DashboardPage() {
   const firstName = profile?.full_name?.split(' ')[0] ?? 'there'
 
   const { data: topicsData } = await supabase
-    .from('user_topics')
-    .select('topic')
+    .from('topics')
+    .select('name')
     .eq('user_id', user.id)
+    .eq('active', true)
+    .order('created_at')
 
-  const topics = topicsData?.map(r => r.topic) ?? []
+  const topics = topicsData?.map(r => r.name) ?? []
 
   return (
     <div className="space-y-7">
