@@ -65,43 +65,6 @@ function Avatar({ url, name, uploading, onUpload }: {
   )
 }
 
-// ─── Delivery constants ───────────────────────────────────────────────────────
-
-const TIMEZONES = [
-  { value: 'Pacific/Honolulu',    label: 'Hawaii (UTC−10)' },
-  { value: 'America/Anchorage',   label: 'Alaska (UTC−9)' },
-  { value: 'America/Los_Angeles', label: 'Pacific Time (UTC−8/−7)' },
-  { value: 'America/Denver',      label: 'Mountain Time (UTC−7/−6)' },
-  { value: 'America/Chicago',     label: 'Central Time (UTC−6/−5)' },
-  { value: 'America/New_York',    label: 'Eastern Time (UTC−5/−4)' },
-  { value: 'America/Sao_Paulo',   label: 'Brasília (UTC−3)' },
-  { value: 'UTC',                 label: 'UTC (UTC±0)' },
-  { value: 'Europe/London',       label: 'London (UTC+0/+1)' },
-  { value: 'Europe/Paris',        label: 'Paris / Berlin / Madrid (UTC+1/+2)' },
-  { value: 'Europe/Helsinki',     label: 'Helsinki / Kyiv (UTC+2/+3)' },
-  { value: 'Europe/Moscow',       label: 'Moscow (UTC+3)' },
-  { value: 'Asia/Tehran',         label: 'Tehran (UTC+3:30)' },
-  { value: 'Asia/Dubai',          label: 'Dubai / Abu Dhabi (UTC+4)' },
-  { value: 'Asia/Kabul',          label: 'Kabul (UTC+4:30)' },
-  { value: 'Asia/Karachi',        label: 'Karachi (UTC+5)' },
-  { value: 'Asia/Kolkata',        label: 'India (UTC+5:30)' },
-  { value: 'Asia/Dhaka',          label: 'Dhaka (UTC+6)' },
-  { value: 'Asia/Bangkok',        label: 'Bangkok / Jakarta (UTC+7)' },
-  { value: 'Asia/Shanghai',       label: 'China / Singapore (UTC+8)' },
-  { value: 'Asia/Tokyo',          label: 'Tokyo / Seoul (UTC+9)' },
-  { value: 'Australia/Sydney',    label: 'Sydney (UTC+10/+11)' },
-  { value: 'Pacific/Auckland',    label: 'Auckland (UTC+12/+13)' },
-]
-
-const DELIVERY_HOURS = [
-  { value: '05:00', label: '5:00 AM' },
-  { value: '06:00', label: '6:00 AM' },
-  { value: '07:00', label: '7:00 AM' },
-  { value: '08:00', label: '8:00 AM' },
-  { value: '09:00', label: '9:00 AM' },
-  { value: '10:00', label: '10:00 AM' },
-]
-
 // ─── Section wrapper ──────────────────────────────────────────────────────────
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -133,13 +96,6 @@ export default function ProfilePage() {
   const [pwdSaved,     setPwdSaved]     = useState(false)
   const [pwdError,     setPwdError]     = useState<string | null>(null)
 
-  // Delivery state
-  const [timezone,     setTimezone]     = useState('UTC')
-  const [deliveryHour, setDeliveryHour] = useState('07:00')
-  const [savingDelivery,  setSavingDelivery]  = useState(false)
-  const [deliverySaved,   setDeliverySaved]   = useState(false)
-  const [deliveryError,   setDeliveryError]   = useState<string | null>(null)
-
   useEffect(() => {
     async function load() {
       const { data: { user } } = await supabase.auth.getUser()
@@ -149,14 +105,12 @@ export default function ProfilePage() {
       // Load profile
       const { data: profile } = await supabase
         .from('profiles')
-        .select('full_name, avatar_url, timezone, delivery_time')
+        .select('full_name, avatar_url')
         .eq('id', user.id)
         .single()
       if (profile) {
         setFullName(profile.full_name ?? '')
         setAvatarUrl(profile.avatar_url ?? null)
-        setTimezone(profile.timezone ?? 'UTC')
-        setDeliveryHour(profile.delivery_time ?? '07:00')
       }
 
     }
@@ -200,27 +154,6 @@ export default function ProfilePage() {
     setSavingName(false)
     setNameSaved(true)
     setTimeout(() => setNameSaved(false), 2500)
-  }
-
-  // ── Save delivery settings ────────────────────────────────────────────────
-
-  async function handleSaveDelivery() {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-    setSavingDelivery(true)
-    setDeliveryError(null)
-    const { error } = await supabase
-      .from('profiles')
-      .update({ timezone, delivery_time: deliveryHour })
-      .eq('id', user.id)
-    setSavingDelivery(false)
-    if (error) {
-      setDeliveryError(t('profile.saveFailed'))
-      console.error('Delivery save error:', error.message)
-      return
-    }
-    setDeliverySaved(true)
-    setTimeout(() => setDeliverySaved(false), 2500)
   }
 
   // ── Change password ────────────────────────────────────────────────────────
@@ -325,44 +258,6 @@ export default function ProfilePage() {
           >
             {pwdSaved ? '✓ ' + t('profile.pwdChanged') : savingPwd ? t('common.loading') : t('profile.changePassword')}
           </button>
-        </div>
-      </Section>
-
-      {/* Delivery */}
-      <Section title={t('profile.delivery')}>
-        <div className="space-y-4">
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('profile.timezone')}</label>
-            <select
-              value={timezone}
-              onChange={(e) => setTimezone(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              {TIMEZONES.map((tz) => (
-                <option key={tz.value} value={tz.value}>{tz.label}</option>
-              ))}
-            </select>
-          </div>
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('profile.deliveryTime')}</label>
-            <select
-              value={deliveryHour}
-              onChange={(e) => setDeliveryHour(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              {DELIVERY_HOURS.map((h) => (
-                <option key={h.value} value={h.value}>{h.label}</option>
-              ))}
-            </select>
-          </div>
-          <button
-            onClick={handleSaveDelivery}
-            disabled={savingDelivery}
-            className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-colors"
-          >
-            {deliverySaved ? '✓ ' + t('profile.deliverySaved') : savingDelivery ? t('common.loading') : t('common.save')}
-          </button>
-          {deliveryError && <p className="text-xs text-red-500">{deliveryError}</p>}
         </div>
       </Section>
 

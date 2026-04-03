@@ -52,7 +52,15 @@
       "Bash(ls /opt/homebrew/bin/node /opt/homebrew/bin/npm ~/.nvm/versions/node/*/bin/npm)",
       "Bash(/Users/ehsantarighat/pinokio/bin/miniconda/bin/npm run:*)",
       "Bash(find '/Users/ehsantarighat/Documents/Daily News Brewer/node_modules/rss-parser' -name *.d.ts)",
-      "Bash(find '/Users/ehsantarighat/Documents/Daily News Brewer/node_modules/@types/rss-parser' -name *.d.ts)"
+      "Bash(find '/Users/ehsantarighat/Documents/Daily News Brewer/node_modules/@types/rss-parser' -name *.d.ts)",
+      "Bash(grep -r \"send\\\\|email\\\\|Email\\\\|mail\\\\|Mail\" '/Users/ehsantarighat/Documents/Daily News Brewer/app/api' --include=*.ts ! -path */node_modules/*)",
+      "Bash(grep -r \"email\\\\|cron\\\\|briefing\\\\|digest\\\\|newsletter\" '/Users/ehsantarighat/Documents/Daily News Brewer' --include=*.ts --include=*.tsx --include=*.json ! -path */node_modules/* ! -path */.next/* ! -path */.git/*)",
+      "Bash(grep -ri \"email\\\\|cron\\\\|briefing\\\\|digest\\\\|newsletter\" /Users/ehsantarighat/Documents/\"Daily News Brewer\" --include=\"*.ts\" --include=\"*.tsx\" --include=\"*.json\" ! -path \"*/node_modules/*\" ! -path \"*/.next/*\" ! -path \"*/.git/*\")",
+      "Bash(grep -r resend '/Users/ehsantarighat/Documents/Daily News Brewer' --include=*.ts --include=*.tsx --include=*.json ! -path */node_modules/* ! -path */.next/* ! -path */.git/*)",
+      "Bash(rm -f \"app/api/send-briefing/route.ts\")",
+      "Bash(rmdir \"app/api/send-briefing\")",
+      "Bash(rm -f \"lib/resend.ts\" \"lib/ai/generateBriefing.ts\" \"components/email/BriefingTemplate.tsx\" \"components/todays-briefing-card.tsx\")",
+      "Bash(npm uninstall:*)"
     ]
   }
 }

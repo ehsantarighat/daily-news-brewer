@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button'
 import type { Topic } from '@/lib/types'
 import { getLocale } from '@/lib/i18n/getLocale'
 import { getMessages, createTranslator } from '@/lib/i18n/translate'
-import { TodaysBriefingCard } from '@/components/todays-briefing-card'
 import { NewsStoriesStrip } from '@/components/news-stories-strip'
 import { GreetingHeader } from '@/components/greeting-header'
 
@@ -36,9 +35,6 @@ export default async function DashboardPage() {
 
       {/* Stories strip */}
       <NewsStoriesStrip />
-
-      {/* Today's briefing */}
-      <TodaysBriefingCard />
 
       {/* Topics */}
       <Card>
