@@ -22,41 +22,40 @@ export async function fetchArticlesForTopic(topic: string): Promise<Article[]> {
     return cached.articles
   }
 
-  const apiKey = process.env.GNEWS_API_KEY
+  const apiKey = process.env.NEWSDATA_API_KEY
   if (!apiKey) {
-    throw new Error('GNEWS_API_KEY is not set')
+    throw new Error('NEWSDATA_API_KEY is not set')
   }
 
   const params = new URLSearchParams({
+    apikey: apiKey,
     q: topic,
-    max: '10',
-    sortby: 'publishedAt',
-    lang: 'en',
-    token: apiKey,
+    language: 'en',
+    size: '10',
   })
 
   const response = await fetch(
-    `https://gnews.io/api/v4/search?${params.toString()}`,
+    `https://newsdata.io/api/1/latest?${params.toString()}`,
     { next: { revalidate: 0 } }
   )
 
   if (!response.ok) {
-    throw new Error(`GNews error for topic "${topic}": ${response.statusText}`)
+    throw new Error(`NewsData error for topic "${topic}": ${response.statusText}`)
   }
 
   const data = await response.json()
 
-  if (!data.articles) {
-    throw new Error(`GNews returned no articles: ${JSON.stringify(data)}`)
+  if (data.status !== 'success') {
+    throw new Error(`NewsData returned status: ${data.status} — ${data.results?.message ?? ''}`)
   }
 
-  const articles: Article[] = (data.articles ?? []).map((a: Record<string, unknown>) => ({
+  const articles: Article[] = (data.results ?? []).map((a: Record<string, unknown>) => ({
     title: stripHtml((a.title as string) ?? ''),
     description: stripHtml(((a.description ?? a.content) as string) ?? ''),
-    url: (a.url as string) ?? '',
-    urlToImage: (a.image as string) || undefined,
-    source: (a.source as { name?: string })?.name ?? 'Unknown',
-    publishedAt: (a.publishedAt as string) ?? '',
+    url: (a.link as string) ?? '',
+    urlToImage: (a.image_url as string) || undefined,
+    source: (a.source_name as string) ?? 'Unknown',
+    publishedAt: (a.pubDate as string) ?? '',
     topic,
   }))
 
