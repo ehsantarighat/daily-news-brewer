@@ -86,7 +86,10 @@ export default async function LandingPage() {
 
       {/* Footer */}
       <footer className="border-t border-gray-100 dark:border-gray-800 py-6 text-center dark:bg-gray-950">
-        <p className="text-xs text-gray-400">{t('landing.footer', { year: String(new Date().getFullYear()) })}</p>
+        <p className="text-xs text-gray-400">
+          {t('landing.footer', { year: String(new Date().getFullYear()) })} ·{' '}
+          <Link href="/terms" className="hover:underline">Terms of Service</Link>
+        </p>
       </footer>
     </div>
   )
