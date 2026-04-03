@@ -49,15 +49,21 @@ export async function fetchArticlesForTopic(topic: string): Promise<Article[]> {
     throw new Error(`NewsData returned status: ${data.status} — ${data.results?.message ?? ''}`)
   }
 
-  const articles: Article[] = (data.results ?? []).map((a: Record<string, unknown>) => ({
-    title: stripHtml((a.title as string) ?? ''),
-    description: stripHtml(((a.description ?? a.content) as string) ?? ''),
-    url: (a.link as string) ?? '',
-    urlToImage: (a.image_url as string) || undefined,
-    source: (a.source_name as string) ?? 'Unknown',
-    publishedAt: (a.pubDate as string) ?? '',
-    topic,
-  }))
+  const articles: Article[] = (data.results ?? []).map((a: Record<string, unknown>) => {
+    // NewsData.io returns "2025-04-03 14:30:00" — normalize to ISO 8601 for reliable date parsing
+    const rawDate = (a.pubDate as string) ?? ''
+    const publishedAt = rawDate.includes('T') ? rawDate : rawDate.replace(' ', 'T') + 'Z'
+
+    return {
+      title: stripHtml((a.title as string) ?? ''),
+      description: stripHtml(((a.description ?? a.content) as string) ?? ''),
+      url: (a.link as string) ?? '',
+      urlToImage: (a.image_url as string) || undefined,
+      source: (a.source_name as string) ?? 'Unknown',
+      publishedAt,
+      topic,
+    }
+  })
 
   articleCache.set(topic, { articles, fetchedAt: Date.now() })
   return articles
