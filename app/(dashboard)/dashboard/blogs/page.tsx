@@ -115,6 +115,25 @@ function useSpeech(text: string) {
 
 // ─── AI Summary Card ──────────────────────────────────────────────────────────
 
+const SUMMARY_TOOLTIP = `Summary Structure
+
+Structure (4–5 sentences):
+• Lead — most important story: who, what, why it matters
+• Development — 1–2 more stories, with explicit connections
+  e.g. "This comes as…" / "Analysts connect this to…"
+• Close — one concrete implication or risk to watch
+
+Tone styles:
+• Professional → BBC/PBS NewsHour anchor — authoritative, composed
+• Casual → NPR correspondent — intelligent, warm, accessible
+• Energetic → Breaking news anchor — urgent, punchy
+• Concise → Bloomberg wire — 2–3 sentences, facts only
+
+Rules:
+• Names real actors, companies and countries — no vague categories
+• Opens directly with the lead story (no "In…" or "Today…")
+• Selects only the most significant and connected stories`
+
 function AISummaryCard({
   summary, loading, tone, onToneChange, onRegenerate,
 }: {
@@ -124,6 +143,7 @@ function AISummaryCard({
   const { t } = useLocale()
   const { audioState, play, pause, stop } = useSpeech(summary)
   const [copied, setCopied] = useState(false)
+  const [tooltipOpen, setTooltipOpen] = useState(false)
 
   async function copyToClipboard() {
     if (!summary) return
@@ -145,6 +165,19 @@ function AISummaryCard({
           </div>
           <span className="text-sm font-semibold text-indigo-900 dark:text-indigo-200 tracking-tight">{t('timeline.aiSummary')}</span>
           <span className="text-[10px] font-medium text-indigo-400 dark:text-indigo-500 bg-indigo-100 dark:bg-indigo-900/60 px-1.5 py-0.5 rounded-full">{t('timeline.claudeAI')}</span>
+          <div className="relative">
+            <button
+              onClick={() => setTooltipOpen(v => !v)}
+              onBlur={() => setTimeout(() => setTooltipOpen(false), 150)}
+              className="w-4 h-4 rounded-full bg-indigo-200 dark:bg-indigo-800 text-indigo-600 dark:text-indigo-300 text-[10px] font-bold leading-none flex items-center justify-center hover:bg-indigo-300 dark:hover:bg-indigo-700 transition-colors"
+              aria-label="About this summary"
+            >?</button>
+            {tooltipOpen && (
+              <div className="absolute left-0 top-6 z-20 w-72 rounded-xl border border-indigo-100 dark:border-indigo-800 bg-white dark:bg-gray-900 shadow-lg p-3.5 text-xs text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
+                {SUMMARY_TOOLTIP}
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="flex items-center gap-3">
