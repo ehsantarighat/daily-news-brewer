@@ -60,7 +60,12 @@
       "Bash(rm -f \"app/api/send-briefing/route.ts\")",
       "Bash(rmdir \"app/api/send-briefing\")",
       "Bash(rm -f \"lib/resend.ts\" \"lib/ai/generateBriefing.ts\" \"components/email/BriefingTemplate.tsx\" \"components/todays-briefing-card.tsx\")",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "Bash(node_modules/.bin/next build:*)",
+      "Bash(/Users/ehsantarighat/pinokio/bin/miniconda/bin/node node_modules/.bin/next build)",
+      "Bash(grep -r \"from ''''@/lib/types''''\" --include=\"*.ts\" --include=\"*.tsx\" -l)",
+      "Bash(grep -r \"from ''''@/lib/types''''\" --include=\"*.ts\" --include=\"*.tsx\")",
+      "Bash(grep -r \"middleware\\\\|proxy\" '/Users/ehsantarighat/Documents/Daily News Brewer/node_modules/next/dist/docs/01-app/' --include=*.md -l)"
     ]
   }
 }
