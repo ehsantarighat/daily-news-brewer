@@ -12,6 +12,18 @@ export interface Article {
 const articleCache = new Map<string, { articles: Article[]; fetchedAt: number }>()
 const CACHE_TTL_MS = 60 * 60 * 1000 // 1 hour
 
+// Map preset topics to NewsData.io categories for better result quality
+const TOPIC_CATEGORY_MAP: Record<string, string> = {
+  'Geopolitics':          'politics',
+  'Policy & Regulation':  'politics',
+  'Health & Biotech':     'health',
+  'Space & Science':      'science',
+  'Food & Agriculture':   'food',
+  'Media & Entertainment':'entertainment',
+  'Defense & Military':   'politics',
+  'Climate & Energy':     'environment',
+}
+
 function stripHtml(html: string): string {
   return html.replace(/<[^>]*>/g, '').trim()
 }
@@ -27,11 +39,16 @@ export async function fetchArticlesForTopic(topic: string): Promise<Article[]> {
     throw new Error('NEWSDATA_API_KEY is not set')
   }
 
+  const category = TOPIC_CATEGORY_MAP[topic]
+
   const params = new URLSearchParams({
     apikey: apiKey,
-    q: topic,
     language: 'en',
     size: '10',
+    ...(category
+      ? { category, q: topic }   // use category + keyword for mapped topics
+      : { q: topic }              // keyword only for unmapped topics
+    ),
   })
 
   const response = await fetch(
