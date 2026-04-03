@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { DarkModeToggle } from '@/components/dark-mode-toggle'
 import { getLocale } from '@/lib/i18n/getLocale'
 import { getMessages, createTranslator } from '@/lib/i18n/translate'
+import { MobileBottomNav } from '@/components/mobile-bottom-nav'
 
 async function DashboardNav({ email }: { email: string }) {
   const locale = await getLocale()
@@ -80,7 +81,8 @@ export default async function DashboardLayout({
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <DashboardNav email={user.email ?? ''} />
-      <main className="max-w-5xl mx-auto px-4 py-8">{children}</main>
+      <main className="max-w-5xl mx-auto px-4 py-8 pb-24 sm:pb-8">{children}</main>
+      <MobileBottomNav />
     </div>
   )
 }
