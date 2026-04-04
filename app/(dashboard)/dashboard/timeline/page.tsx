@@ -101,48 +101,77 @@ function timeAgo(dateStr: string): string {
   return `${Math.floor(hours / 24)}d ago`
 }
 
-// ─── Audio Player Hook (Web Speech API) ──────────────────────────────────────
+// ─── Audio Player Hook (OpenAI TTS) ──────────────────────────────────────────
 
 type AudioState = 'idle' | 'loading' | 'playing' | 'paused'
 
 function useSpeech(text: string) {
   const [audioState, setAudioState] = useState<AudioState>('idle')
+  const audioRef   = useRef<HTMLAudioElement | null>(null)
+  const blobUrlRef = useRef<string | null>(null)
 
   useEffect(() => {
-    window.speechSynthesis?.cancel()
+    audioRef.current?.pause()
+    if (blobUrlRef.current) { URL.revokeObjectURL(blobUrlRef.current); blobUrlRef.current = null }
     setAudioState('idle')
   }, [text])
 
   useEffect(() => {
-    return () => { window.speechSynthesis?.cancel() }
+    return () => {
+      audioRef.current?.pause()
+      if (blobUrlRef.current) URL.revokeObjectURL(blobUrlRef.current)
+    }
   }, [])
 
-  function play() {
-    if (!text || typeof window === 'undefined' || !window.speechSynthesis) return
+  async function play() {
+    if (!text) return
 
-    if (audioState === 'paused') {
-      window.speechSynthesis.resume()
+    if (audioState === 'paused' && audioRef.current) {
+      audioRef.current.play()
       setAudioState('playing')
       return
     }
 
-    window.speechSynthesis.cancel()
-    const utterance   = new SpeechSynthesisUtterance(text)
-    utterance.rate    = 0.95
-    utterance.pitch   = 1.0
-    utterance.onend   = () => setAudioState('idle')
-    utterance.onerror = () => setAudioState('idle')
-    window.speechSynthesis.speak(utterance)
-    setAudioState('playing')
+    if (blobUrlRef.current && audioRef.current) {
+      audioRef.current.currentTime = 0
+      audioRef.current.play()
+      setAudioState('playing')
+      return
+    }
+
+    setAudioState('loading')
+    try {
+      const res = await fetch('/api/timeline/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text }),
+      })
+      if (!res.ok) { setAudioState('idle'); return }
+
+      const blob = await res.blob()
+      const url  = URL.createObjectURL(blob)
+      blobUrlRef.current = url
+
+      const audio = new Audio(url)
+      audio.onended = () => setAudioState('idle')
+      audio.onerror = () => setAudioState('idle')
+      audioRef.current = audio
+
+      await audio.play()
+      setAudioState('playing')
+    } catch {
+      setAudioState('idle')
+    }
   }
 
   function pause() {
-    window.speechSynthesis?.pause()
+    audioRef.current?.pause()
     setAudioState('paused')
   }
 
   function stop() {
-    window.speechSynthesis?.cancel()
+    audioRef.current?.pause()
+    if (audioRef.current) audioRef.current.currentTime = 0
     setAudioState('idle')
   }
 
