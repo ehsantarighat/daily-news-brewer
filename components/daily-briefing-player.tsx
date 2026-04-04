@@ -88,28 +88,47 @@ export function DailyBriefingPlayer() {
     return () => clearInterval(id)
   }, [countdown])
 
-  // ── Step animation while generating ───────────────────────────────────────
+  // ── Step animation: tied to actual API calls ──────────────────────────────
   useEffect(() => {
     if (!generating) { setStep(0); return }
-    // Advance steps at ~8s intervals: gather(8s) → script(16s) → audio(24s) → finalize
-    const timings = [8000, 16000, 28000]
-    const ids = timings.map((t, i) => setTimeout(() => setStep(i + 1), t))
+    const ids = [
+      setTimeout(() => setStep(1), 3000),   // after fetch starts
+      setTimeout(() => setStep(2), 10000),  // script usually done ~10s
+    ]
     return () => ids.forEach(clearTimeout)
   }, [generating])
 
-  // ── Generate ───────────────────────────────────────────────────────────────
+  // ── Generate — two sequential API calls ───────────────────────────────────
   async function handleGenerate() {
     setGenerating(true)
     setError(null)
-    try {
-      const res  = await fetch('/api/daily-briefing', { method: 'POST' })
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async function safePost(url: string, body?: object): Promise<any> {
+      const res  = await fetch(url, {
+        method:  'POST',
+        headers: body ? { 'Content-Type': 'application/json' } : {},
+        body:    body ? JSON.stringify(body) : undefined,
+      })
       const text = await res.text()
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      let data: any
-      try { data = JSON.parse(text) } catch { throw new Error('Server error. Please try again.') }
-      if (!res.ok) throw new Error(data?.error ?? 'Generation failed')
-      setStatus(data as Status)
-      setCountdown(data.ms_remaining ?? TWENTY_FOUR_HOURS)
+      let data: Record<string, unknown>
+      try { data = JSON.parse(text) } catch { throw new Error('Server error — please try again.') }
+      if (!res.ok) throw new Error((data?.error as string) ?? 'Request failed')
+      return data
+    }
+
+    try {
+      // Step 1: fetch articles + generate script (~20s)
+      setStep(0)
+      const { briefingId, script } = await safePost('/api/daily-briefing/script')
+
+      // Step 2: TTS + upload (~25s)
+      setStep(2)
+      const result = await safePost('/api/daily-briefing/audio', { briefingId, script })
+
+      setStep(3)
+      setStatus(result as Status)
+      setCountdown(result.ms_remaining ?? TWENTY_FOUR_HOURS)
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong. Please try again.')
     } finally {
