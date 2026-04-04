@@ -13,11 +13,12 @@ export async function POST() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    // 24h rate limit
+    // 24h rate limit — only count COMPLETED briefings (audio_url not empty)
     const { data: existing } = await supabase
       .from('daily_briefings')
       .select('created_at')
       .eq('user_id', user.id)
+      .neq('audio_url', '')
       .order('created_at', { ascending: false })
       .limit(1)
       .maybeSingle()
@@ -25,9 +26,12 @@ export async function POST() {
     if (existing) {
       const age = Date.now() - new Date(existing.created_at).getTime()
       if (age < TWENTY_FOUR_HOURS) {
-        return NextResponse.json({ error: 'Episode not ready yet' }, { status: 429 })
+        return NextResponse.json({ error: 'Episode not ready yet. Next episode in ' + Math.ceil((TWENTY_FOUR_HOURS - age) / 3_600_000) + ' hours.' }, { status: 429 })
       }
     }
+
+    // Clean up any stale incomplete records before inserting new one
+    await supabase.from('daily_briefings').delete().eq('user_id', user.id).eq('audio_url', '')
 
     // ── Fetch topics ───────────────────────────────────────────────────────────
     const { data: topicsData } = await supabase
@@ -40,9 +44,8 @@ export async function POST() {
 
     type Article = { title: string; description: string; source: string }
 
-    // ── Dynamic imports (avoid module-level crash) ─────────────────────────────
+    // ── Dynamic import ─────────────────────────────────────────────────────────
     const Anthropic = (await import('@anthropic-ai/sdk')).default
-    const Parser    = (await import('rss-parser')).default
 
     // ── News articles ──────────────────────────────────────────────────────────
     let newsArticles: Article[] = []
@@ -62,24 +65,23 @@ export async function POST() {
       } catch { /* timeout — skip */ }
     }
 
-    // ── RSS posts ──────────────────────────────────────────────────────────────
+    // ── RSS posts (native fetch + regex, no rss-parser dependency) ────────────
     const blogPosts: Article[] = []
     if (sources?.length) {
-      const parser = new Parser({ timeout: 4000 })
-      const since  = new Date(Date.now() - TWENTY_FOUR_HOURS)
+      const since = new Date(Date.now() - TWENTY_FOUR_HOURS)
       await Promise.allSettled(
         sources.map(async (src) => {
           try {
-            const feed = await parser.parseURL(src.feed_url)
-            const recent = (feed.items ?? [])
-              .filter(item => { const d = item.isoDate ?? item.pubDate; return d ? new Date(d) > since : true })
-              .slice(0, 2)
-            for (const item of recent) {
-              blogPosts.push({
-                title:       item.title ?? '',
-                description: (item.contentSnippet ?? item.summary ?? '').slice(0, 200),
-                source:      src.name,
-              })
+            const res  = await fetch(src.feed_url, { signal: AbortSignal.timeout(4000) })
+            const xml  = await res.text()
+            // Extract <item> blocks
+            const items = [...xml.matchAll(/<item[\s>]([\s\S]*?)<\/item>/gi)].slice(0, 3)
+            for (const [, body] of items) {
+              const title   = (body.match(/<title[^>]*><!\[CDATA\[(.*?)\]\]>|<title[^>]*>(.*?)<\/title>/i)?.[1] ?? body.match(/<title[^>]*>(.*?)<\/title>/i)?.[1] ?? '').trim()
+              const desc    = (body.match(/<description[^>]*><!\[CDATA\[(.*?)\]\]>|<description[^>]*>(.*?)<\/description>/i)?.[1] ?? '').replace(/<[^>]+>/g, '').slice(0, 200).trim()
+              const pubDate = body.match(/<pubDate[^>]*>(.*?)<\/pubDate>/i)?.[1] ?? body.match(/<published[^>]*>(.*?)<\/published>/i)?.[1] ?? ''
+              if (pubDate && new Date(pubDate) < since) continue
+              if (title) blogPosts.push({ title, description: desc, source: src.name })
             }
           } catch { /* skip bad feeds */ }
         })
