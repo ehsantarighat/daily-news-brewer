@@ -18,7 +18,7 @@ async function DashboardNav({ email }: { email: string }) {
         {/* Logo */}
         <Link href="/dashboard" className="shrink-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.svg" alt="Content Bite" className="h-8 w-auto" />
+          <img src="/logo.svg" alt="Content Bite" className="h-7 w-auto" />
         </Link>
 
         {/* Nav links */}
