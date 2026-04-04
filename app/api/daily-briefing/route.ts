@@ -18,6 +18,7 @@ export async function GET() {
       .from('daily_briefings')
       .select('audio_url, created_at, duration_seconds')
       .eq('user_id', user.id)
+      .neq('audio_url', '')          // ignore incomplete records
       .order('created_at', { ascending: false })
       .limit(1)
       .maybeSingle()
