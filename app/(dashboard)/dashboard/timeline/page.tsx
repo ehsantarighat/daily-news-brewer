@@ -101,83 +101,48 @@ function timeAgo(dateStr: string): string {
   return `${Math.floor(hours / 24)}d ago`
 }
 
-// ─── Audio Player Hook (OpenAI TTS) ──────────────────────────────────────────
+// ─── Audio Player Hook (Web Speech API) ──────────────────────────────────────
 
 type AudioState = 'idle' | 'loading' | 'playing' | 'paused'
 
 function useSpeech(text: string) {
   const [audioState, setAudioState] = useState<AudioState>('idle')
-  const audioRef    = useRef<HTMLAudioElement | null>(null)
-  const blobUrlRef  = useRef<string | null>(null)
 
   useEffect(() => {
-    audioRef.current?.pause()
-    if (blobUrlRef.current) { URL.revokeObjectURL(blobUrlRef.current); blobUrlRef.current = null }
+    window.speechSynthesis?.cancel()
     setAudioState('idle')
   }, [text])
 
   useEffect(() => {
-    return () => {
-      audioRef.current?.pause()
-      if (blobUrlRef.current) URL.revokeObjectURL(blobUrlRef.current)
-    }
+    return () => { window.speechSynthesis?.cancel() }
   }, [])
 
-  async function play() {
-    if (!text) return
+  function play() {
+    if (!text || typeof window === 'undefined' || !window.speechSynthesis) return
 
-    if (audioState === 'paused' && audioRef.current) {
-      audioRef.current.play()
+    if (audioState === 'paused') {
+      window.speechSynthesis.resume()
       setAudioState('playing')
       return
     }
 
-    if (blobUrlRef.current && audioRef.current) {
-      audioRef.current.currentTime = 0
-      audioRef.current.play()
-      setAudioState('playing')
-      return
-    }
-
-    setAudioState('loading')
-    try {
-      const res = await fetch('/api/timeline/tts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text }),
-      })
-
-      if (!res.ok) {
-        console.error('TTS error:', res.status)
-        setAudioState('idle')
-        return
-      }
-
-      const blob = await res.blob()
-      const url  = URL.createObjectURL(blob)
-      blobUrlRef.current = url
-
-      const audio = new Audio(url)
-      audio.onended = () => setAudioState('idle')
-      audio.onerror = () => setAudioState('idle')
-      audioRef.current = audio
-
-      await audio.play()
-      setAudioState('playing')
-    } catch (e) {
-      console.error('TTS fetch error:', e)
-      setAudioState('idle')
-    }
+    window.speechSynthesis.cancel()
+    const utterance   = new SpeechSynthesisUtterance(text)
+    utterance.rate    = 0.95
+    utterance.pitch   = 1.0
+    utterance.onend   = () => setAudioState('idle')
+    utterance.onerror = () => setAudioState('idle')
+    window.speechSynthesis.speak(utterance)
+    setAudioState('playing')
   }
 
   function pause() {
-    audioRef.current?.pause()
+    window.speechSynthesis?.pause()
     setAudioState('paused')
   }
 
   function stop() {
-    audioRef.current?.pause()
-    if (audioRef.current) audioRef.current.currentTime = 0
+    window.speechSynthesis?.cancel()
     setAudioState('idle')
   }
 
