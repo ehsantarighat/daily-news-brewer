@@ -251,9 +251,15 @@ export function DailyBriefingPlayer() {
             ref={audioRef}
             src={status.briefing.audio_url}
             onTimeUpdate={() => setCurrent(audioRef.current?.currentTime ?? 0)}
-            onLoadedMetadata={() => setDuration(audioRef.current?.duration ?? status.briefing!.duration_seconds)}
+            onLoadedMetadata={() => {
+              const d = audioRef.current?.duration
+              if (d && isFinite(d)) setDuration(d)
+              else if (status.briefing!.duration_seconds > 0) setDuration(status.briefing!.duration_seconds)
+            }}
+            onError={() => setError('Audio file could not be loaded. Check that the Supabase "briefings" storage bucket is set to Public.')}
             onEnded={() => setPlaying(false)}
             preload="metadata"
+            crossOrigin="anonymous"
           />
 
           {/* Episode meta */}
