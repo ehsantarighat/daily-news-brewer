@@ -104,10 +104,11 @@ export function DailyBriefingPlayer() {
     try {
       const res  = await fetch('/api/daily-briefing', { method: 'POST' })
       const text = await res.text()
-      let data: Record<string, unknown>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let data: any
       try { data = JSON.parse(text) } catch { throw new Error('Server error. Please try again.') }
-      if (!res.ok) throw new Error((data.error as string) ?? 'Generation failed')
-      setStatus(data)
+      if (!res.ok) throw new Error(data?.error ?? 'Generation failed')
+      setStatus(data as Status)
       setCountdown(data.ms_remaining ?? TWENTY_FOUR_HOURS)
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong. Please try again.')
