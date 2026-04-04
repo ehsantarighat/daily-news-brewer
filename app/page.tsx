@@ -20,7 +20,8 @@ export default async function LandingPage() {
       {/* Nav */}
       <nav className="border-b border-gray-100 dark:border-gray-800 px-4">
         <div className="max-w-5xl mx-auto h-14 flex items-center justify-between">
-          <span className="text-lg font-bold text-indigo-600">{t('common.appName')}</span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.svg" alt="Content Bite" className="h-8 w-auto" />
           <div className="flex items-center gap-3">
             <Link href="/login">
               <Button variant="ghost" size="sm" className="text-gray-600 dark:text-gray-300">{t('common.signIn')}</Button>

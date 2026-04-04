@@ -72,7 +72,8 @@ export default function SignupPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="text-2xl font-bold text-indigo-600 mb-1">{t('common.appName')}</div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.svg" alt="Content Bite" className="h-10 w-auto mx-auto mb-1" />
           <CardTitle className="text-xl">{t('signup.title')}</CardTitle>
           <CardDescription>{t('signup.subtitle')}</CardDescription>
         </CardHeader>

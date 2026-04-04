@@ -68,7 +68,8 @@ export default function OnboardingTopicsPage() {
       <div className="max-w-3xl mx-auto px-4 py-12">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="text-xl font-bold text-indigo-600 mb-4">{t('common.appName')}</div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.svg" alt="Content Bite" className="h-10 w-auto mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-gray-900">{t('onboarding.title')}</h1>
           <p className="mt-2 text-gray-500 text-sm">
             {t('onboarding.subtitle', { max: String(MAX_TOPICS) })}
