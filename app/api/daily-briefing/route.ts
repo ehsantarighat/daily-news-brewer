@@ -30,40 +30,48 @@ function splitIntoChunks(text: string, maxLen = 4000): string[] {
 // ─── GET — return current episode status ──────────────────────────────────────
 
 export async function GET() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { data: briefing } = await supabase
-    .from('daily_briefings')
-    .select('audio_url, created_at, duration_seconds')
-    .eq('user_id', user.id)
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .maybeSingle()
+    const { data: briefing, error: dbError } = await supabase
+      .from('daily_briefings')
+      .select('audio_url, created_at, duration_seconds')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
 
-  if (!briefing) return NextResponse.json({ briefing: null, canGenerate: true })
+    // Table may not exist yet — treat as no briefing
+    if (dbError) return NextResponse.json({ briefing: null, canGenerate: true })
+    if (!briefing) return NextResponse.json({ briefing: null, canGenerate: true })
 
-  const nextAt      = new Date(new Date(briefing.created_at).getTime() + TWENTY_FOUR_HOURS)
-  const now         = new Date()
-  const canGenerate = now >= nextAt
-  const msRemaining = Math.max(0, nextAt.getTime() - now.getTime())
+    const nextAt      = new Date(new Date(briefing.created_at).getTime() + TWENTY_FOUR_HOURS)
+    const now         = new Date()
+    const canGenerate = now >= nextAt
+    const msRemaining = Math.max(0, nextAt.getTime() - now.getTime())
 
-  return NextResponse.json({
-    briefing: {
-      audio_url:        briefing.audio_url,
-      created_at:       briefing.created_at,
-      duration_seconds: briefing.duration_seconds,
-    },
-    canGenerate,
-    next_at:      nextAt.toISOString(),
-    ms_remaining: msRemaining,
-  })
+    return NextResponse.json({
+      briefing: {
+        audio_url:        briefing.audio_url,
+        created_at:       briefing.created_at,
+        duration_seconds: briefing.duration_seconds,
+      },
+      canGenerate,
+      next_at:      nextAt.toISOString(),
+      ms_remaining: msRemaining,
+    })
+  } catch (e) {
+    console.error('[daily-briefing GET]', e)
+    return NextResponse.json({ briefing: null, canGenerate: true })
+  }
 }
 
 // ─── POST — generate new episode ──────────────────────────────────────────────
 
 export async function POST() {
+  try {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -231,4 +239,11 @@ ${contentList}`,
     next_at:      nextAt.toISOString(),
     ms_remaining: TWENTY_FOUR_HOURS,
   })
+  } catch (e) {
+    console.error('[daily-briefing POST]', e)
+    return NextResponse.json(
+      { error: e instanceof Error ? e.message : 'Unexpected error. Please try again.' },
+      { status: 500 }
+    )
+  }
 }
