@@ -65,7 +65,11 @@
       "Bash(/Users/ehsantarighat/pinokio/bin/miniconda/bin/node node_modules/.bin/next build)",
       "Bash(grep -r \"from ''''@/lib/types''''\" --include=\"*.ts\" --include=\"*.tsx\" -l)",
       "Bash(grep -r \"from ''''@/lib/types''''\" --include=\"*.ts\" --include=\"*.tsx\")",
-      "Bash(grep -r \"middleware\\\\|proxy\" '/Users/ehsantarighat/Documents/Daily News Brewer/node_modules/next/dist/docs/01-app/' --include=*.md -l)"
+      "Bash(grep -r \"middleware\\\\|proxy\" '/Users/ehsantarighat/Documents/Daily News Brewer/node_modules/next/dist/docs/01-app/' --include=*.md -l)",
+      "Bash(node_modules/.bin/tsc --noEmit)",
+      "Bash(export PATH=\"$PATH:/usr/local/bin:/opt/homebrew/bin\")",
+      "Bash(npx next:*)",
+      "Bash(find /Users/ehsantarighat/Documents/Daily News Brewer/lib -type f \\\\\\(-name *.ts -o -name *.tsx \\\\\\))"
     ]
   }
 }

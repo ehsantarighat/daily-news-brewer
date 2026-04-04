@@ -3,6 +3,12 @@
 import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useLocale } from '@/components/locale-provider'
+import {
+  isPushSupported, registerSW, requestPermission,
+  subscribeToPush, unsubscribeFromPush, getExistingSubscription,
+  FREQUENCY_OPTIONS,
+  type NotificationFrequency,
+} from '@/lib/push'
 
 // ─── Avatar ───────────────────────────────────────────────────────────────────
 
@@ -61,6 +67,217 @@ function Avatar({ url, name, uploading, onUpload }: {
       >
         {uploading ? 'Uploading…' : 'Change photo'}
       </button>
+    </div>
+  )
+}
+
+// ─── Notification Settings ────────────────────────────────────────────────────
+
+function NotificationSettings() {
+  const [supported,         setSupported]         = useState(false)
+  const [permission,        setPermission]        = useState<NotificationPermission>('default')
+  const [enabled,           setEnabled]           = useState(false)
+  const [timelineFreq,      setTimelineFreq]      = useState<NotificationFrequency>('off')
+  const [magazineFreq,      setMagazineFreq]      = useState<NotificationFrequency>('off')
+  const [saving,            setSaving]            = useState(false)
+  const [toggling,          setToggling]          = useState(false)
+  const [saved,             setSaved]             = useState(false)
+  const [error,             setError]             = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!isPushSupported()) return
+    setSupported(true)
+    setPermission(Notification.permission)
+
+    // Register SW and check existing subscription
+    registerSW().then(async () => {
+      const sub = await getExistingSubscription()
+      if (sub) {
+        setEnabled(true)
+        // Load saved preferences
+        fetch('/api/push/subscribe')
+          .then(r => r.json())
+          .then(data => {
+            if (data.timeline_frequency) setTimelineFreq(data.timeline_frequency)
+            if (data.magazine_frequency) setMagazineFreq(data.magazine_frequency)
+          })
+          .catch(() => {})
+      }
+    })
+  }, [])
+
+  async function handleToggle() {
+    setToggling(true)
+    setError(null)
+    try {
+      if (enabled) {
+        // Disable — unsubscribe from browser + delete from DB
+        await unsubscribeFromPush()
+        await fetch('/api/push/subscribe', { method: 'DELETE' })
+        setEnabled(false)
+        setTimelineFreq('off')
+        setMagazineFreq('off')
+      } else {
+        // Enable — request permission then subscribe
+        const perm = await requestPermission()
+        setPermission(perm)
+        if (perm !== 'granted') {
+          setError('Permission denied. Please allow notifications in your browser settings.')
+          return
+        }
+        const vapidRes = await fetch('/api/push/vapid-key')
+        const { key } = await vapidRes.json()
+        const sub = await subscribeToPush(key)
+        if (!sub) { setError('Failed to enable notifications. Please try again.'); return }
+
+        await fetch('/api/push/subscribe', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ subscription: sub, timeline_frequency: '6h', magazine_frequency: '3h' }),
+        })
+        setTimelineFreq('6h')
+        setMagazineFreq('3h')
+        setEnabled(true)
+      }
+    } finally {
+      setToggling(false)
+    }
+  }
+
+  async function handleSave() {
+    setSaving(true)
+    setSaved(false)
+    setError(null)
+    try {
+      const sub = await getExistingSubscription()
+      if (!sub) { setError('Notification subscription lost. Please re-enable.'); return }
+      await fetch('/api/push/subscribe', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ subscription: sub, timeline_frequency: timelineFreq, magazine_frequency: magazineFreq }),
+      })
+      setSaved(true)
+      setTimeout(() => setSaved(false), 2500)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  if (!supported) {
+    return (
+      <div className="flex items-center gap-2 text-xs text-gray-400 dark:text-gray-500 py-1">
+        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+            d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+        </svg>
+        Push notifications are not supported in this browser.
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-5">
+      {/* Enable / Disable toggle */}
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Push Notifications</p>
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+            {enabled ? 'Notifications are active' : 'Get notified about new content'}
+          </p>
+        </div>
+        <button
+          onClick={handleToggle}
+          disabled={toggling || permission === 'denied'}
+          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none disabled:opacity-50 ${
+            enabled ? 'bg-indigo-600' : 'bg-gray-200 dark:bg-gray-700'
+          }`}
+        >
+          <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
+            enabled ? 'translate-x-6' : 'translate-x-1'
+          }`} />
+        </button>
+      </div>
+
+      {permission === 'denied' && (
+        <p className="text-xs text-amber-500 dark:text-amber-400">
+          Notifications are blocked. Enable them in your browser settings, then come back here.
+        </p>
+      )}
+
+      {/* Frequency pickers — only when enabled */}
+      {enabled && (
+        <>
+          <div className="space-y-4 border-t border-gray-100 dark:border-gray-800 pt-4">
+            {/* Timeline */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                <svg className="w-3.5 h-3.5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                    d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                </svg>
+                Timeline
+              </label>
+              <div className="flex flex-wrap gap-1.5">
+                {FREQUENCY_OPTIONS.map(opt => (
+                  <button
+                    key={opt.value}
+                    onClick={() => setTimelineFreq(opt.value)}
+                    className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
+                      timelineFreq === opt.value
+                        ? 'bg-indigo-600 text-white'
+                        : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Magazines */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                <svg className="w-3.5 h-3.5 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                    d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7M6 17a1 1 0 110-2 1 1 0 010 2z" />
+                </svg>
+                Magazines
+              </label>
+              <div className="flex flex-wrap gap-1.5">
+                {FREQUENCY_OPTIONS.map(opt => (
+                  <button
+                    key={opt.value}
+                    onClick={() => setMagazineFreq(opt.value)}
+                    className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
+                      magazineFreq === opt.value
+                        ? 'bg-violet-600 text-white'
+                        : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Quiet hours note */}
+          <p className="text-[11px] text-gray-400 dark:text-gray-500">
+            🌙 Quiet hours: notifications are paused between 11 PM – 7 AM (UTC).
+          </p>
+
+          {/* Save button */}
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-colors"
+          >
+            {saved ? '✓ Saved' : saving ? 'Saving…' : 'Save preferences'}
+          </button>
+        </>
+      )}
+
+      {error && <p className="text-xs text-red-500">{error}</p>}
     </div>
   )
 }
@@ -268,6 +485,11 @@ export default function ProfilePage() {
             {pwdSaved ? '✓ ' + t('profile.pwdChanged') : savingPwd ? t('common.loading') : t('profile.changePassword')}
           </button>
         </div>
+      </Section>
+
+      {/* Notifications */}
+      <Section title="Notifications">
+        <NotificationSettings />
       </Section>
 
       {/* Sign out — mobile only (desktop has it in the header) */}
