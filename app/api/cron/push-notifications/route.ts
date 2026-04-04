@@ -4,6 +4,7 @@ import webpush from 'web-push'
 import Parser from 'rss-parser'
 import type { NotificationFrequency } from '@/lib/push'
 
+export const runtime     = 'nodejs'
 export const dynamic    = 'force-dynamic'
 export const maxDuration = 60
 

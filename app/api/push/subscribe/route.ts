@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import type { NotificationFrequency } from '@/lib/push'
 
+export const runtime = 'nodejs'
+
 // ── GET — load current preferences ────────────────────────────────────────────
 export async function GET() {
   const supabase = await createClient()
