@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import OpenAI from 'openai'
 
 export const runtime     = 'nodejs'
 export const dynamic     = 'force-dynamic'
@@ -32,7 +31,8 @@ export async function POST(request: NextRequest) {
     if (!briefingId || !script) return NextResponse.json({ error: 'Missing briefingId or script' }, { status: 400 })
 
     // ── TTS ────────────────────────────────────────────────────────────────────
-    const openai  = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+    const OpenAI = (await import('openai')).default
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
     const chunks  = splitIntoChunks(script, 4000)
     const buffers: Buffer[] = []
 

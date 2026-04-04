@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import Anthropic from '@anthropic-ai/sdk'
-import Parser from 'rss-parser'
 
 export const runtime     = 'nodejs'
 export const dynamic     = 'force-dynamic'
@@ -41,6 +39,10 @@ export async function POST() {
       .from('blog_sources').select('name, feed_url').eq('user_id', user.id).eq('active', true).limit(4)
 
     type Article = { title: string; description: string; source: string }
+
+    // ── Dynamic imports (avoid module-level crash) ─────────────────────────────
+    const Anthropic = (await import('@anthropic-ai/sdk')).default
+    const Parser    = (await import('rss-parser')).default
 
     // ── News articles ──────────────────────────────────────────────────────────
     let newsArticles: Article[] = []
