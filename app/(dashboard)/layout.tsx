@@ -12,7 +12,7 @@ async function DashboardNav({ email }: { email: string }) {
   const t = createTranslator(messages)
 
   return (
-    <nav className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+    <nav className="sticky top-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border-b border-gray-200/80 dark:border-gray-800/80">
       <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between gap-4">
 
         {/* Logo */}
@@ -38,7 +38,7 @@ async function DashboardNav({ email }: { email: string }) {
         </div>
 
         {/* Right side */}
-        <div className="flex items-center gap-2 ml-auto">
+        <div className="flex items-center gap-1 ml-auto">
           {/* Search icon */}
           <Link
             href="/dashboard/search"
@@ -51,15 +51,15 @@ async function DashboardNav({ email }: { email: string }) {
             </svg>
           </Link>
 
-          <span className="hidden md:block text-gray-400 dark:text-gray-500 text-xs truncate max-w-[140px]">{email}</span>
+          <DarkModeToggle />
 
-          <form action="/api/auth/logout" method="POST">
-            <button type="submit" className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-xs underline">
+          <span className="hidden md:block text-gray-400 dark:text-gray-500 text-xs truncate max-w-[140px] ml-1">{email}</span>
+
+          <form action="/api/auth/logout" method="POST" className="hidden sm:block">
+            <button type="submit" className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-xs underline ml-1">
               {t('nav.signOut')}
             </button>
           </form>
-
-          <DarkModeToggle />
         </div>
       </div>
     </nav>
@@ -81,7 +81,7 @@ export default async function DashboardLayout({
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <DashboardNav email={user.email ?? ''} />
-      <main className="max-w-5xl mx-auto px-4 py-8 pb-24 sm:pb-8">{children}</main>
+      <main className="max-w-5xl mx-auto px-4 py-5 sm:py-8 pb-24 sm:pb-8">{children}</main>
       <MobileBottomNav />
     </div>
   )

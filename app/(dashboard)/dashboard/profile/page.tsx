@@ -95,6 +95,7 @@ export default function ProfilePage() {
   const [savingPwd,    setSavingPwd]    = useState(false)
   const [pwdSaved,     setPwdSaved]     = useState(false)
   const [pwdError,     setPwdError]     = useState<string | null>(null)
+  const [signingOut,   setSigningOut]   = useState(false)
 
   useEffect(() => {
     async function load() {
@@ -154,6 +155,14 @@ export default function ProfilePage() {
     setSavingName(false)
     setNameSaved(true)
     setTimeout(() => setNameSaved(false), 2500)
+  }
+
+  // ── Sign out ───────────────────────────────────────────────────────────────
+
+  async function handleSignOut() {
+    setSigningOut(true)
+    await supabase.auth.signOut()
+    window.location.href = '/'
   }
 
   // ── Change password ────────────────────────────────────────────────────────
@@ -260,6 +269,21 @@ export default function ProfilePage() {
           </button>
         </div>
       </Section>
+
+      {/* Sign out — mobile only (desktop has it in the header) */}
+      <div className="sm:hidden pt-2">
+        <button
+          onClick={handleSignOut}
+          disabled={signingOut}
+          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-2xl border border-red-100 dark:border-red-900/50 text-red-500 dark:text-red-400 text-sm font-semibold hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors disabled:opacity-50"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+          {signingOut ? 'Signing out…' : 'Sign Out'}
+        </button>
+      </div>
 
     </div>
   )
