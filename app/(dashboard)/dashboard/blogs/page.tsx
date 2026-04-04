@@ -7,6 +7,7 @@ import type { BlogPost } from '@/app/api/blogs/route'
 import { useLocale } from '@/components/locale-provider'
 import { BlogStoriesStrip } from '@/components/news-stories-strip'
 import { Pagination } from '@/components/pagination'
+import { BlogsAskAI } from '@/components/blogs-ask-ai'
 
 const PAGE_SIZE = 20
 
@@ -541,6 +542,9 @@ export default function BlogsPage() {
           onRegenerate={() => { lastFilterKeyRef.current = ''; generateSummary(filtered, filterKey, tone) }}
         />
       )}
+
+      {/* Ask AI */}
+      {!loading && filtered.length > 0 && <BlogsAskAI />}
 
       {/* Time filter */}
       <div className="flex items-center gap-2 flex-wrap">
