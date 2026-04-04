@@ -153,19 +153,19 @@ function AISummaryCard({
   }
 
   return (
-    <div className="rounded-2xl border border-indigo-100 dark:border-indigo-900 bg-gradient-to-br from-indigo-50 via-white to-violet-50 dark:from-indigo-950/60 dark:via-gray-900 dark:to-violet-950/40 p-6 shadow-sm">
+    <div className="rounded-2xl border border-indigo-100 dark:border-indigo-900 bg-gradient-to-br from-indigo-50 via-white to-violet-50 dark:from-indigo-950/60 dark:via-gray-900 dark:to-violet-950/40 p-4 sm:p-6 shadow-sm">
 
-      {/* Header row */}
+      {/* Row 1: Title + Regenerate */}
       <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2.5">
-          <div className="flex items-center justify-center w-7 h-7 rounded-full bg-indigo-600 shadow-sm">
-            <svg className="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="flex items-center justify-center w-6 h-6 rounded-full bg-indigo-600 shadow-sm shrink-0">
+            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
               <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
             </svg>
           </div>
           <span className="text-sm font-semibold text-indigo-900 dark:text-indigo-200 tracking-tight">{t('timeline.aiSummary')}</span>
-          <span className="text-[10px] font-medium text-indigo-400 dark:text-indigo-500 bg-indigo-100 dark:bg-indigo-900/60 px-1.5 py-0.5 rounded-full">{t('timeline.claudeAI')}</span>
-          <div className="relative">
+          <span className="text-[10px] font-medium text-indigo-400 dark:text-indigo-500 bg-indigo-100 dark:bg-indigo-900/60 px-1.5 py-0.5 rounded-full shrink-0">{t('timeline.claudeAI')}</span>
+          <div className="relative shrink-0">
             <button
               onClick={() => setTooltipOpen(v => !v)}
               onBlur={() => setTimeout(() => setTooltipOpen(false), 150)}
@@ -180,73 +180,22 @@ function AISummaryCard({
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          {/* Audio controls */}
-          {summary && !loading && (
-            <div className="flex items-center gap-1">
-              {audioState === 'loading' ? (
-                <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium text-indigo-400 dark:text-indigo-500 border border-indigo-200 dark:border-indigo-800">
-                  <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                  </svg>
-                  {t('common.audioLoading')}
-                </span>
-              ) : audioState === 'playing' ? (
-                <>
-                  <span className="flex items-end gap-0.5 h-4 mr-1">
-                    {[1,2,3].map((i) => (
-                      <span key={i} className="w-0.5 bg-indigo-500 rounded-full animate-pulse"
-                        style={{ height: `${[60,100,75][i-1]}%`, animationDelay: `${i*0.15}s` }} />
-                    ))}
-                  </span>
-                  <button onClick={pause} title={t('common.pause')} className="p-1.5 rounded-lg text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900 transition-colors">
-                    <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
-                  </button>
-                  <button onClick={stop} title={t('common.stop')} className="p-1.5 rounded-lg text-indigo-400 dark:text-indigo-500 hover:bg-indigo-100 dark:hover:bg-indigo-900 transition-colors">
-                    <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h12v12H6z" /></svg>
-                  </button>
-                </>
-              ) : (
-                <button onClick={play} title={audioState === 'paused' ? t('common.resume') : t('common.listen')}
-                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900 border border-indigo-200 dark:border-indigo-800 transition-colors">
-                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
-                  {audioState === 'paused' ? t('common.resume') : t('common.listen')}
-                </button>
-              )}
-            </div>
-          )}
-
-          {/* Share */}
-          {summary && !loading && (
-            <button onClick={copyToClipboard}
-              className="flex items-center gap-1.5 text-xs font-medium text-indigo-500 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors"
-              title="Copy to clipboard">
-              {copied ? (
-                <><svg className="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg><span className="text-emerald-500">{t('common.copied')}</span></>
-              ) : (
-                <><svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>{t('common.share')}</>
-              )}
-            </button>
-          )}
-
-          {/* Regenerate */}
-          <button onClick={onRegenerate} disabled={loading}
-            className="flex items-center gap-1.5 text-xs font-medium text-indigo-500 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 disabled:opacity-40 transition-colors">
-            <svg className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-            {loading ? t('common.generating') : t('common.regenerate')}
-          </button>
-        </div>
+        {/* Regenerate — icon only on mobile */}
+        <button onClick={onRegenerate} disabled={loading}
+          className="flex items-center gap-1.5 text-xs font-medium text-indigo-400 dark:text-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-300 disabled:opacity-40 transition-colors shrink-0 ml-2">
+          <svg className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          <span className="hidden sm:inline">{loading ? t('common.generating') : t('common.regenerate')}</span>
+        </button>
       </div>
 
-      {/* Tone selector */}
-      <div className="flex items-center gap-1.5 flex-wrap mb-4">
-        <span className="text-[11px] font-semibold text-indigo-400 dark:text-indigo-500 uppercase tracking-wide mr-0.5">{t('timeline.tone')}</span>
+      {/* Row 2: Tone selector — horizontal scroll, never wraps */}
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 mb-3 scrollbar-none">
+        <span className="text-[11px] font-semibold text-indigo-400 dark:text-indigo-500 uppercase tracking-wide shrink-0">{t('timeline.tone')}</span>
         {TONE_VALUES.map((toneValue) => (
           <button key={toneValue} onClick={() => onToneChange(toneValue)}
-            className={`px-2.5 py-0.5 rounded-full text-[11px] font-medium transition-all ${
+            className={`shrink-0 px-2.5 py-1 rounded-full text-[11px] font-medium transition-all ${
               tone === toneValue
                 ? 'bg-indigo-600 text-white'
                 : 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-500 dark:text-indigo-400 hover:bg-indigo-200 dark:hover:bg-indigo-900'
@@ -255,6 +204,53 @@ function AISummaryCard({
           </button>
         ))}
       </div>
+
+      {/* Row 3: Audio + Copy — only when summary is ready */}
+      {summary && !loading && (
+        <div className="flex items-center gap-2 mb-4">
+          {/* Audio */}
+          {audioState === 'loading' ? (
+            <span className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-indigo-400 border border-indigo-200 dark:border-indigo-800">
+              <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+              </svg>
+              <span className="hidden sm:inline">{t('common.audioLoading')}</span>
+            </span>
+          ) : audioState === 'playing' ? (
+            <div className="flex items-center gap-1">
+              <span className="flex items-end gap-0.5 h-4 mr-0.5">
+                {[1,2,3].map((i) => (
+                  <span key={i} className="w-0.5 bg-indigo-500 rounded-full animate-pulse"
+                    style={{ height: `${[60,100,75][i-1]}%`, animationDelay: `${i*0.15}s` }} />
+                ))}
+              </span>
+              <button onClick={pause} title={t('common.pause')} className="p-1.5 rounded-lg text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900 transition-colors">
+                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
+              </button>
+              <button onClick={stop} title={t('common.stop')} className="p-1.5 rounded-lg text-indigo-400 dark:text-indigo-500 hover:bg-indigo-100 dark:hover:bg-indigo-900 transition-colors">
+                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h12v12H6z" /></svg>
+              </button>
+            </div>
+          ) : (
+            <button onClick={play}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900 border border-indigo-200 dark:border-indigo-800 transition-colors">
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+              {audioState === 'paused' ? t('common.resume') : t('common.listen')}
+            </button>
+          )}
+
+          {/* Copy */}
+          <button onClick={copyToClipboard} title="Copy to clipboard"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-indigo-500 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900 border border-indigo-200 dark:border-indigo-800 transition-colors">
+            {copied ? (
+              <><svg className="w-3 h-3 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg><span className="text-emerald-500">{t('common.copied')}</span></>
+            ) : (
+              <><svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg><span className="hidden sm:inline">{t('common.share')}</span></>
+            )}
+          </button>
+        </div>
+      )}
 
       {/* Body */}
       {loading && !summary ? (
