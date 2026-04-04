@@ -58,11 +58,15 @@ export function DailyBriefingPlayer() {
   // ── Load current status ────────────────────────────────────────────────────
   useEffect(() => {
     fetch('/api/daily-briefing')
-      .then(r => r.json())
+      .then(async r => {
+        const text = await r.text()
+        try { return JSON.parse(text) } catch { return { briefing: null, canGenerate: true } }
+      })
       .then((data: Status & { ms_remaining?: number }) => {
         setStatus(data)
         if (data.ms_remaining) setCountdown(data.ms_remaining)
       })
+      .catch(() => setStatus({ briefing: null, canGenerate: true }))
       .finally(() => setLoading(false))
   }, [])
 
@@ -99,8 +103,10 @@ export function DailyBriefingPlayer() {
     setError(null)
     try {
       const res  = await fetch('/api/daily-briefing', { method: 'POST' })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error ?? 'Generation failed')
+      const text = await res.text()
+      let data: Record<string, unknown>
+      try { data = JSON.parse(text) } catch { throw new Error('Server error. Please try again.') }
+      if (!res.ok) throw new Error((data.error as string) ?? 'Generation failed')
       setStatus(data)
       setCountdown(data.ms_remaining ?? TWENTY_FOUR_HOURS)
     } catch (e) {
