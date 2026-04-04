@@ -8,6 +8,7 @@ import { useLocale } from '@/components/locale-provider'
 import { BlogStoriesStrip } from '@/components/news-stories-strip'
 import { Pagination } from '@/components/pagination'
 import { BlogsAskAI } from '@/components/blogs-ask-ai'
+import { DailyBriefingPlayer } from '@/components/daily-briefing-player'
 
 const PAGE_SIZE = 20
 
@@ -530,6 +531,8 @@ export default function BlogsPage() {
       </div>
 
       {/* Stories strip */}
+      {!loading && <DailyBriefingPlayer />}
+
       {!loading && <BlogStoriesStrip />}
 
       {/* AI Summary */}
