@@ -100,7 +100,7 @@ export async function POST() {
 
     const { content } = await anthropic.messages.create({
       model:      'claude-sonnet-4-20250514',
-      max_tokens: 900,
+      max_tokens: 700,
       messages: [{
         role:    'user',
         content: `You are a professional radio host. Write a 5-minute audio briefing script (~600 words) for ${today}.
@@ -111,7 +111,7 @@ Rules:
 - Natural spoken transitions ("Moving on...", "In other news...", "Meanwhile...")
 - Pure flowing prose — no markdown, bullets, or headers
 - End: "That's your Content Bite briefing for today. Your next episode will be ready in 24 hours. Happy reading!"
-- Strictly 550–650 words
+- Strictly 400–450 words maximum — this is critical, do not exceed
 
 Stories:
 ${contentList}`,

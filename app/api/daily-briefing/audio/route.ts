@@ -27,8 +27,10 @@ export async function POST(request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const { briefingId, script } = await request.json() as { briefingId: string; script: string }
-    if (!briefingId || !script) return NextResponse.json({ error: 'Missing briefingId or script' }, { status: 400 })
+    const { briefingId, script: rawScript } = await request.json() as { briefingId: string; script: string }
+    if (!briefingId || !rawScript) return NextResponse.json({ error: 'Missing briefingId or script' }, { status: 400 })
+    // Hard cap at 3800 chars to guarantee single TTS call and avoid timeout
+    const script = rawScript.slice(0, 3800)
 
     // ── TTS ────────────────────────────────────────────────────────────────────
     const OpenAI = (await import('openai')).default
@@ -37,7 +39,7 @@ export async function POST(request: NextRequest) {
     const buffers: Buffer[] = []
 
     for (const chunk of chunks) {
-      const tts = await openai.audio.speech.create({ model: 'tts-1-hd', voice: 'onyx', input: chunk })
+      const tts = await openai.audio.speech.create({ model: 'tts-1', voice: 'onyx', input: chunk })
       buffers.push(Buffer.from(await tts.arrayBuffer()))
     }
 
